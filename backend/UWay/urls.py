@@ -20,12 +20,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from users.views import UserViewSet
+from user.views import UserViewSet
 from institution.views import InstitutionViewSet
+from teacher.views import TeacherViewSet
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet,    basename='user')
-router.register(r'institutions', InstitutionViewSet, basename='institution')
+router.register(r'user', UserViewSet,    basename='user')
+router.register(r'institution', InstitutionViewSet, basename='institution')
+router.register(r'teachers', TeacherViewSet, basename='teacher')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -16,7 +16,7 @@ class User(AbstractUser):
                              on_delete=models.SET_NULL,
                              null=True,
                              blank=True,
-                             related_name='users',
+                             related_name='user',
                              verbose_name='Institución'
                            )
 
