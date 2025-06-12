@@ -23,11 +23,13 @@ from rest_framework.routers import DefaultRouter
 from user.views import UserViewSet
 from institution.views import InstitutionViewSet
 from teacher.views import TeacherViewSet
+from driver.views import DriverViewSet
 
 router = DefaultRouter()
 router.register(r'user', UserViewSet,    basename='user')
 router.register(r'institution', InstitutionViewSet, basename='institution')
 router.register(r'teachers', TeacherViewSet, basename='teacher')
+router.register(r'drivers', DriverViewSet, basename='driver')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

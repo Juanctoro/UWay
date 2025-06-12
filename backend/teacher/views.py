@@ -5,7 +5,7 @@ from .serializers import TeacherSerializer
 
 class TeacherViewSet(viewsets.ModelViewSet):
     """
-    CRUD para profesores enlazados a User por DNI.
+    CRUD for Teacher model linked by User DNI as primary key
     """
     queryset = Teacher.objects.select_related('user').all()
     serializer_class = TeacherSerializer

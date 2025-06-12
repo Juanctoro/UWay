@@ -5,5 +5,5 @@ from .serializers import UserSerializer
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'dni'            # usaremos /api/user/{dni}/
+    lookup_field = 'dni'            # usaremos /user/{dni}/
     permission_classes = [permissions.AllowAny]

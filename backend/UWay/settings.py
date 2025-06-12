@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'user',
     'institution',
     'teacher',
+    'driver',
 ]
 
 AUTH_USER_MODEL = 'user.User'
