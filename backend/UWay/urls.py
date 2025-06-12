@@ -14,9 +14,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# proyecto/urls.py
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from users.views import UserViewSet
+from institution.views import InstitutionViewSet
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet,    basename='user')
+router.register(r'institutions', InstitutionViewSet, basename='institution')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # aquí monta TODO el router
+    path('', include(router.urls)),
+    # opcional: login/logout en la browsable API
+    path('api-auth/', include('rest_framework.urls')),
 ]
