@@ -24,12 +24,17 @@ from user.views import UserViewSet
 from institution.views import InstitutionViewSet
 from teacher.views import TeacherViewSet
 from driver.views import DriverViewSet
+from vehicle.views import VehicleViewSet
+from trip.views import TripViewSet
 
 router = DefaultRouter()
 router.register(r'user', UserViewSet,    basename='user')
 router.register(r'institution', InstitutionViewSet, basename='institution')
 router.register(r'teachers', TeacherViewSet, basename='teacher')
 router.register(r'drivers', DriverViewSet, basename='driver')
+router.register(r'vehicles', VehicleViewSet, basename='vehicle')
+router.register(r'trips', TripViewSet, basename='trip')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

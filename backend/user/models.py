@@ -7,7 +7,7 @@ class User(AbstractUser):
     names               = models.CharField('Nombres', max_length=150)
     lastnames             = models.CharField('Apellidos', max_length=150)
     phone              = models.CharField('Teléfono', max_length=30, blank=True)
-    addres           = models.CharField('Dirección', max_length=255, blank=True)
+    address           = models.CharField('Dirección', max_length=255, blank=True)
     email                 = models.EmailField('Email', unique=True)
     institutional_email   = models.EmailField('Email institucional', unique=True, blank=True)
     password              = models.CharField('Email institucional', max_length=30)

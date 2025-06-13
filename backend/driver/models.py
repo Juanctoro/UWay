@@ -13,4 +13,4 @@ class Driver(models.Model):
     is_approved    = models.BooleanField('Approved', default=False)
 
     def __str__(self):
-        return f"{self.user.dni} - {self.license_number}"
+        return f"{self.user.dni} - {self.user.names} - {self.license_number}"
