@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'dni', 'names', 'lastnames',
-            'phone', 'addres',
+            'phone', 'address',
             'email', 'institutional_email',
             'institution', 'password',
         ]
