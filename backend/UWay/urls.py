@@ -20,6 +20,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
+from admin_user.views import AdminUserViewSet
+from student.views import StudentViewSet
 from user.views import UserViewSet
 from institution.views import InstitutionViewSet
 from teacher.views import TeacherViewSet
@@ -30,6 +32,8 @@ router.register(r'user', UserViewSet,    basename='user')
 router.register(r'institution', InstitutionViewSet, basename='institution')
 router.register(r'teachers', TeacherViewSet, basename='teacher')
 router.register(r'drivers', DriverViewSet, basename='driver')
+router.register(r'students', StudentViewSet, basename='student')
+router.register(r'admin_users', AdminUserViewSet, basename='admin_user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
