@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'driver',
     'vehicle',
     'trip',
+    'route',
 ]
 
 AUTH_USER_MODEL = 'user.User'
