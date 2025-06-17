@@ -10,7 +10,7 @@ class User(AbstractUser):
     address           = models.CharField('Dirección', max_length=255, blank=True)
     email                 = models.EmailField('Email', unique=True)
     institutional_email   = models.EmailField('Email institucional', unique=True, blank=True)
-    password              = models.CharField('Email institucional', max_length=30)
+    password              = models.CharField('Email institucional', max_length=255)
     institution          = models.ForeignKey(
                              Institution,
                              on_delete=models.SET_NULL,

@@ -90,13 +90,13 @@ WSGI_APPLICATION = 'UWay.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('DB_NAME', 'uway'),
         'USER': os.getenv('DB_USER', 'uway'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'uway123'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
-    }
+    } 
 }
 
 # Password validation
