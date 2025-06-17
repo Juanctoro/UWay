@@ -13,7 +13,11 @@ urlpatterns = [
     path('drivers/',      include('driver.urls')),
     path('vehicles/',     include('vehicle.urls')),
     path('trips/',        include('trip.urls')),
+    path('student/',       include('student.urls')),
+    path('admin_user/',       include('admin_user.urls')),
+    path('review/',       include('review.urls')),
     path('routes/',       include('route.urls')),
+    path('reservation/',       include('reservation.urls')),
 
     path('api-auth/', include('rest_framework.urls')),
 ]

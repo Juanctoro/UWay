@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'vehicle',
     'trip',
     'route',
+    'reservation',
+    'review',
 ]
 
 AUTH_USER_MODEL = 'user.User'
