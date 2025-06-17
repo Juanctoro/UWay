@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'institution',
     'teacher',
     'driver',
+    'admin_user',
+    'student',
     'vehicle',
     'trip',
     'route',
