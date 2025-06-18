@@ -4,4 +4,4 @@ from .models import Route
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
-        fields = ['id', 'duration_minutes', 'distance', 'stops']
+        fields = ['id', 'trip', 'duration_minutes', 'distance', 'stops']
