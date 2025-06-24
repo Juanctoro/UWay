@@ -15,6 +15,9 @@ class Reservation(models.Model):
                       null=True
                   )
     observation = models.TextField(blank=True)
+    has_boarded     = models.BooleanField(default=False)
+    boarded_at      = models.DateTimeField(null=True, blank=True)
+    reserved_at   = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Reservation {self.id} for trip {self.trip.id} by user {self.user}"

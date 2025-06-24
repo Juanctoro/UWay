@@ -5,3 +5,10 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = ['id', 'vehicle', 'start_point', 'end_point', 'qr_url']
+
+class MostUsedTripsSerializer(serializers.ModelSerializer):
+    total_trips = serializers.IntegerField()
+
+    class Meta:
+        model = Trip
+        fields = ['id', 'total_trips']

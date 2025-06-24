@@ -9,3 +9,10 @@ class VehicleSerializer(serializers.ModelSerializer):
             'brand', 'soat', 'status', 'color',
             'plate', 'category'
         ]
+
+class VehicleTotalTripsSerializer(serializers.ModelSerializer):
+    total_trips = serializers.IntegerField()
+
+    class Meta:
+        model = Vehicle
+        fields = ['id','plate', 'total_trips']
