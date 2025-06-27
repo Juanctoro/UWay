@@ -42,6 +42,23 @@ class Trip(models.Model):
     end_point   = gis_models.PointField('End Point',   srid=4326)
     qr_url      = models.URLField('QR Code URL', max_length=200, blank=True)
 
+    # --- Trip status options ---
+    STATUS_SCHEDULED    = 'scheduled'
+    STATUS_IN_PROGRESS  = 'in_progress'
+    STATUS_COMPLETED    = 'completed'
+    STATUS_CHOICES = [
+        (STATUS_SCHEDULED,    'Scheduled'),
+        (STATUS_IN_PROGRESS,  'In Progress'),
+        (STATUS_COMPLETED,    'Completed'),
+    ]
+    # --------------------------
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_SCHEDULED,
+        help_text="Current status of the trip"
+    )
+
     # conectar manager personalizado
     objects = TripQuerySet.as_manager()
 
@@ -49,6 +66,7 @@ class Trip(models.Model):
         return (
             f"Trip {self.id} for vehicle {self.vehicle.plate} "
             f"from {self.start_point.tuple} to {self.end_point.tuple}"
+            f"Status {self.status}"
         )
 
     @classmethod
