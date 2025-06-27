@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -63,3 +64,12 @@ class DriverViewSet(viewsets.ModelViewSet):
         
         serializer = DriverAverageRatingsSerializer(ratings, many=True)
         return Response(ratings)
+    
+class DriverFilesViewSet(viewsets.ModelViewSet):
+    queryset = Driver.objects.select_related('user').all()
+    serializer_class = DriverFilesSerializer
+    parser_classes = [MultiPartParser, FormParser]  # Necesario para subir archivos PDF
+    lookup_field = 'user'  # lookup by User DNI
+    permission_classes = [AllowAny]   
+
+    
