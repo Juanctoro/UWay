@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'utils',
     'user',
     'institution',
     'teacher',
@@ -139,3 +140,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Allowed host
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'reinel.vargas@correounivalle.edu.co'
+EMAIL_HOST_PASSWORD = 'wbmd wzkm ylec siom '
+DEFAULT_FROM_EMAIL = 'UWay <reinel.vargas@correounivalle.edu.co>'

@@ -1,9 +1,39 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.db.models import Count
 from .models import User
-from .serializers import UserSerializer
+from .serializers import *
+from trip.models import Trip
+from reservation.models import Reservation
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'dni'            # usaremos /user/{dni}/
     permission_classes = [permissions.AllowAny]
+
+    # Rervas hechas por un usuario específico
+    @action(detail=True, methods=['get'])
+    def user_reservations(self, request, dni=None):
+        user = self.get_object()
+        total = Reservation.objects.filter(user_id=dni).count()
+
+        return Response({
+            'user_dni': user.dni,
+            'total_reservations': total
+            })
+    
+    # Reservas hechas por cada usuario
+    @action(detail=False, methods=['get'])
+    def total_reservations(self, request):
+        users = (User.objects
+                 .annotate(total_reservations=Count('reservations'))
+                 .order_by('-total_reservations')
+                 .exclude(total_reservations=0)
+            )
+
+        serializer = UserTotalReservationsSerializer(users, many=True)
+        return Response(serializer.data)
+
+        

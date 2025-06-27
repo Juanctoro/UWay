@@ -31,3 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
             pwd = validated_data.pop('password')
             instance.set_password(pwd)
         return super().update(instance, validated_data)
+    
+class UserTotalReservationsSerializer(serializers.ModelSerializer):
+    total_reservations = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ['dni', 'names', 'total_reservations']

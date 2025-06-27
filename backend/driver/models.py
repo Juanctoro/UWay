@@ -6,7 +6,7 @@ class Driver(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name='driver_profile'
+        related_name='drivers'
     )
     license_number = models.CharField('License Number', max_length=50)
     papers         = models.URLField('Papers URL', max_length=200)
@@ -14,3 +14,4 @@ class Driver(models.Model):
 
     def __str__(self):
         return f"{self.user.dni} - {self.user.names} - {self.license_number}"
+        
