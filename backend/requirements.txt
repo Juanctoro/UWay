@@ -6,4 +6,6 @@ djangorestframework-simplejwt>=5.2,<6.0
 # Soporte GeoDjango / PostGIS
 psycopg2-binary>=2.9,<3.0
 djangorestframework-gis>=0.18
-GDAL==3.8.4
+
+qrcode==8.2
+pillow==11.2.1
