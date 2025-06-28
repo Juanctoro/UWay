@@ -62,6 +62,7 @@ class Trip(models.Model):
         default=STATUS_SCHEDULED,
         help_text="Current status of the trip"
     )
+    deviation_detected = models.BooleanField(default=False)
 
     # conectar manager personalizado
     objects = TripQuerySet.as_manager()
