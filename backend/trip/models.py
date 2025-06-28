@@ -41,7 +41,7 @@ class Trip(models.Model):
     start_point = gis_models.PointField('Start Point', srid=4326)
     end_point   = gis_models.PointField('End Point',   srid=4326)
     qr_url      = models.URLField('QR Code URL', max_length=200, blank=True)
-    route = gis_models.MultiLineStringField('Route Geometry', srid=4326, blank=True, null=True)
+    route       = gis_models.MultiLineStringField('Route Geometry', srid=4326, blank=True, null=True)
     duration    = models.PositiveIntegerField('Duration (minutes)', blank=True, null=True)
     distance    = models.FloatField('Distance (km)', blank=True, null=True)
 
@@ -77,14 +77,13 @@ class Trip(models.Model):
         return cls.objects.nearby(lon, lat, radius)
 
     def nearby_stops(self, lon, lat, radius=500):
-        """
-        Wrapper de instancia: lista de vértices de self.route
-        dentro del radio.
-        """
         user_loc = Point(lon, lat, srid=4326)
         pts = []
         if self.route:
-            for lon_p, lat_p in self.route.coords:
-                if Point(lon_p, lat_p, srid=4326).distance(user_loc) <= radius:
-                    pts.append((lon_p, lat_p))
+            for line in self.route:  # cada LineString dentro del MultiLineString
+                for coord in line.coords:  # coord es (lon, lat)
+                    lon_p, lat_p = coord
+                    if Point(lon_p, lat_p, srid=4326).distance(user_loc) <= radius:
+                        pts.append((lon_p, lat_p))
         return pts
+
