@@ -16,7 +16,6 @@ urlpatterns = [
     path('students/',       include('student.urls')),
     path('admin_users/',       include('admin_user.urls')),
     path('reviews/',       include('review.urls')),
-    path('routes/',       include('route.urls')),
     path('reservations/',       include('reservation.urls')),
 
     path('api-auth/', include('rest_framework.urls')),

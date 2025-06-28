@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'student',
     'vehicle',
     'trip',
-    'route',
     'reservation',
     'review',
 ]
