@@ -53,3 +53,8 @@ class DriverAverageRatingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Driver
         fields = ['driver_id', 'average_rating']
+
+
+class LocationUpdateSerializer(serializers.Serializer):
+    lat = serializers.FloatField()
+    lon = serializers.FloatField()

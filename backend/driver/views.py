@@ -1,6 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
+from django.contrib.gis.geos import Point, GEOSGeometry
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.db.models import Count, F, Avg
@@ -72,4 +73,39 @@ class DriverFilesViewSet(viewsets.ModelViewSet):
     lookup_field = 'user'  # lookup by User DNI
     permission_classes = [AllowAny]   
 
-    
+@api_view(['POST'])
+def update_location(request, driver_id):
+    serializer = LocationUpdateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    lat = serializer.validated_data['lat']
+    lon = serializer.validated_data['lon']
+
+    try:
+        driver = Driver.objects.get(pk=driver_id)
+    except Driver.DoesNotExist:
+        return Response({'detail': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    point = Point(lon, lat, srid=4326)
+    driver.current_location = point
+    driver.save()
+
+    # Encontrar viaje activo
+    trip = Trip.objects.filter(vehicle__driver=driver, status=Trip.STATUS_IN_PROGRESS).first()
+    if not trip or not trip.route:
+        return Response({'detail': 'No active trip or route assigned'}, status=status.HTTP_200_OK)
+
+    # Convertir geometrías a GEOS para comparar
+    driver_geom = GEOSGeometry(point.wkt, srid=4326)
+    route_geom = GEOSGeometry(trip.route.wkt, srid=4326)
+
+    # 50 metros ≈ 0.00045 grados
+    max_deviation = 50 / 111139
+
+    if driver_geom.distance(route_geom) > max_deviation:
+        trip.deviation_detected = True
+        trip.save()
+        return Response({'detail': 'Deviation detected'}, status=status.HTTP_200_OK)
+
+    return Response({'detail': 'Location updated successfully'}, status=status.HTTP_200_OK)
