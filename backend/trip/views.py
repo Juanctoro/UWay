@@ -58,8 +58,9 @@ class TripViewSet(viewsets.ModelViewSet):
         if not reservation:
             return Response({'error': 'No tienes una reserva para este viaje.'}, status=status.HTTP_403_FORBIDDEN)
 
-        # Se marcar como "abordado" o registrar un timestamp
-        # Por ejemplo: reservation.boarded = True; reservation.save()
+        # Se marca como "abordado" el trip.
+        reservation.has_boarded = True; 
+        reservation.save()
 
         return Response({'message': 'Viaje validado exitosamente.'})
     

@@ -13,7 +13,7 @@ class Student(models.Model):
     )
     semester = models.CharField(verbose_name='Semestre', max_length=100)
     code = models.CharField(verbose_name='Código', max_length=100)
-    is_active = models.CharField(verbose_name='Activo', default=True, max_length=100)
+    is_active = models.BooleanField(verbose_name='Activo', default=False, max_length=100)
 
     def __str__(self):
         return f"{self.user.dni} - {self.user.names} {self.user.lastnames}"

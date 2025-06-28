@@ -18,7 +18,7 @@ def generate_qr_url(trip_id: int) -> str:
 
     # Generar QR como imagen
     img = qrcode.make(url)
-    path = f"qr_codes/trip_{trip_id}.png"
+    path = f"Uway/files/qr_codes/trip_{trip_id}.png"
     buffer = ContentFile(b"")
     img.save(buffer)
     buffer.seek(0)

@@ -17,5 +17,6 @@ class APIRoot(APIView):
             'student':       reverse('student-list',     request=request, format=format),
             'review':        reverse('review-list',      request=request, format=format),
             'admin_user':    reverse('admin_user-list',  request=request, format=format),
+            'staff':         reverse('staff-list',       request=request, format=format),
             'reservation':   reverse('reservation-list', request=request, format=format),
         })
