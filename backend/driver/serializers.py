@@ -15,7 +15,6 @@ class DriverSerializer(serializers.ModelSerializer):
         model = Driver
         fields = ['user', 'license_number', 'papers', 'is_approved', 'current_location']
 
-
 class DriverFilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Driver
