@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.gis.db import models as gis_models
 
 def upload_to_soat(instance, filename):
     return f"UWay/files/driver_files/{instance.user.dni}/SOAT_{instance.user.dni}.pdf"
@@ -21,6 +22,7 @@ class Driver(models.Model):
     license_number = models.CharField('License Number', max_length=50)
     papers         = models.URLField('Papers URL', max_length=200)
     is_approved    = models.BooleanField('Approved', default=False)
+    current_location = gis_models.PointField('Current Location', srid=4326, null=True, blank=True)
 
     soat_file = models.FileField('SOAT File', upload_to=upload_to_soat, null=True, blank=True)
     driver_license_file = models.FileField('Driver License File', upload_to=upload_to_driver_license, null=True)

@@ -2,11 +2,25 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
+import math
 from django.db.models import Count
 from utils.qr import generate_qr_url
 from .models import Trip
 from .serializers import *
 from reservation.models import Reservation
+
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Calcula la distancia en metros entre dos puntos
+    usando la fórmula de Haversine.
+    """
+    R = 6_371_000  # radio de la Tierra en metros
+    φ1, φ2 = math.radians(lat1), math.radians(lat2)
+    Δφ = math.radians(lat2 - lat1)
+    Δλ = math.radians(lon2 - lon1)
+    a = math.sin(Δφ/2)**2 + math.cos(φ1) * math.cos(φ2) * math.sin(Δλ/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
 
 class TripViewSet(viewsets.ModelViewSet):
     # CRUD for Trip model using PostGIS PointFields and FK to Vehicle
@@ -49,3 +63,54 @@ class TripViewSet(viewsets.ModelViewSet):
         reservation.save()
 
         return Response({'message': 'Viaje validado exitosamente.'})
+    
+    
+    @action(detail=False, methods=['get'], url_path='nearby-trips')
+    def nearby_trips(self, request):
+        """
+        GET /api/trips/nearby-trips/?lon=<float>&lat=<float>&radius=<int opcional>
+        Devuelve todos los trips que tengan paradas a ≤ radius metros de (lon, lat)
+        y para cada uno incluye la distancia a la parada MÁS CERCANA.
+        """
+        lon = request.query_params.get('lon')
+        lat = request.query_params.get('lat')
+        try:
+            lon, lat = float(lon), float(lat)
+        except (TypeError, ValueError):
+            return Response(
+                {"detail": "Parámetros 'lon' y 'lat' requeridos y válidos."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        radius = float(request.query_params.get('radius', 500))
+
+        # 1) Filtrar trips que tengan start, end o alguna parada a ≤ radius
+        trips_qs = Trip.get_nearby(lon, lat, radius)
+
+        results = []
+        for trip in trips_qs:
+            # 2) Obtener sólo las paradas de ese trip dentro del radio
+            stops = trip.nearby_stops(lon, lat, radius)
+            if not stops:
+                continue
+
+            # 3) Calcular distancias de cada parada y quedarnos con la mínima
+            distancias = [
+                haversine(lat, lon, lat_p, lon_p) 
+                for lon_p, lat_p in stops
+            ]
+            idx = distancias.index(min(distancias))
+            nearest = stops[idx]
+            min_dist = distancias[idx]
+
+            # 4) Armar el dict de salida
+            results.append({
+                "trip_id": trip.id,
+                "vehicle_plate": trip.vehicle.plate,
+                "nearest_stop_distance_m": min_dist,
+                "nearest_stop": {
+                    "longitude": nearest[0],
+                    "latitude":  nearest[1]
+                }
+            })
+
+        return Response(results)
