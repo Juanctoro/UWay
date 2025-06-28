@@ -44,6 +44,7 @@ class Trip(models.Model):
     route       = gis_models.MultiLineStringField('Route Geometry', srid=4326, blank=True, null=True)
     duration    = models.PositiveIntegerField('Duration (minutes)', blank=True, null=True)
     distance    = models.FloatField('Distance (km)', blank=True, null=True)
+    start_time  = models.DateTimeField('Hora de inicio', blank=True, null=True)
 
     # --- Trip status options ---
     STATUS_SCHEDULED    = 'scheduled'

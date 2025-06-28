@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.gis.geos import MultiLineString, LineString, Point
 from .models import Trip
 
-class TripSerializer(GeoFeatureModelSerializer):
+class TripSerializer(serializers.ModelSerializer):
     waypoints = serializers.ListField(
         child=serializers.ListField(
             child=serializers.FloatField(),
@@ -12,16 +12,14 @@ class TripSerializer(GeoFeatureModelSerializer):
             max_length=2
         ),
         write_only=True,
-        required=False,
-        help_text="Lista opcional de puntos intermedios [[lon, lat], [lon, lat], ...]"
+        required=False
     )
 
     class Meta:
         model = Trip
-        geo_field = 'route'
         fields = (
             'id', 'vehicle', 'start_point', 'end_point', 'qr_url',
-            'route', 'duration', 'distance', 'status', 'waypoints'
+            'route', 'duration', 'distance', 'status', 'waypoints', 'start_time'
         )
         read_only_fields = ('route', 'duration', 'distance')
 
