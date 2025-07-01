@@ -1,10 +1,16 @@
 import axios from 'axios';
 
-const axiosClient = axios.create({
-  baseURL: 'http://localhost:8000/', // ajusta al prefijo de tus rutas
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const api = axios.create({
+  baseURL: 'http://localhost:8000/',
 });
 
-export default axiosClient;
+// Interceptor para añadir token en cada petición
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Token ${token}`;
+  }
+  return config;
+});
+
+export default api;

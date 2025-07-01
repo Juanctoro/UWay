@@ -1,64 +1,45 @@
-// src/components/Register.jsx
-
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import React, {useState} from 'react';
-import axios from 'axios';
+import api from '../api/axiosClient';
 
-const API_BASE = 'http://localhost:8000/';
+export default function Register() {
+  const [formData, setFormData] = useState({
+    dni: '',
+    names: '',
+    lastnames: '',
+    phone: '',
+    address: '',
+    email: '',
+    institutional_email: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
 
-export default function Register(){
-    const [formData, setFormData] = useState({
-        dni: '',
-        names: '',
-        lastnames: '',
-        phone: '',
-        address: '',
-        email: '',
-        institutional_email: '',
-        password: '',
-    });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: undefined }));
+  };
 
-    const [errors, setErrors] = useState ({});
-    const [message,setMessage] = useState('');
-    const navigate = useNavigate();
-
-    const handleChange = e => {
-        const {name, value} = e.target;
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-
-        setErrors(prev => ({
-            ...prev,
-            [name]: undefined,
-        }));    
-    };
-
-    const handleRegister = async e => {
-        e.preventDefault();
-        setMessage('');
-        try {
-            const response = await axios.post(`${API_BASE}users/`, formData);
-            setMessage('Usuario registrado exitosamente');
-            navigate('/login');
-            console.log(response.data);
-        } catch (error) {
-            console.error(error.reponse?.data || error.message);
-
-            if (error.response && error.response.data){
-                setErrors(error.response.data);
-            }
-
-            setMessage('Error al registrar usuario');
-        }
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setMsg('');
+    try {
+      await api.post('/users/', formData);
+      setMsg('Usuario registrado exitosamente');
+      navigate('/login');
+    } catch (error) {
+      if (error.response?.data) setErrors(error.response.data);
+      setMsg('Error al registrar usuario');
     }
+  };
 
-    return (
+  return (
     <div>
       <h3>Registro de Usuario</h3>
-      <form onSubmit={handleRegister}>
+      <form onSubmit={handleSubmit}>
         {[
           { name: 'dni', label: 'DNI' },
           { name: 'names', label: 'Nombres' },
@@ -79,17 +60,17 @@ export default function Register(){
               required
             />
             {errors[name] && (
-                <div style={{ color: 'red '}}>
-                    {errors[name].map((err,idx) => (
-                        <div key={idx}> {err} </div>
-                    ))}
-                </div>
+              <div style={{ color: 'red' }}>
+                {errors[name].map((err, idx) => (
+                  <div key={idx}>{err}</div>
+                ))}
+              </div>
             )}
           </div>
         ))}
         <button type="submit">Registrarse</button>
       </form>
-      {message && <div>{message}</div>}
+      {msg && <div>{msg}</div>}
     </div>
   );
 }

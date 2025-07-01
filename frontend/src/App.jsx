@@ -1,59 +1,62 @@
-//import React from 'react';
-import React, {useState} from 'react';
+// src/App.jsx
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './components/Login'
-import Register from './components/Register'
-import Profile from './components/Profile'
-import './App.css'
+import { AuthProvider, useAuth } from './context/AuthContext';
+import RequireAuth from './components/RequireAuth';
 
-function App() {
-  const [user, setUser] = useState(null);
+import Login from './components/Login';
+import Register from './components/Register';
+import Profile from './components/Profile';
 
-  const fakeLogin = () => {
-    const userData = {
-      dni: "12345678",
-      names: 'Juan',
-      lastnames: 'Pérez',
-      phone: '123456789',
-      address: 'Calle 123',
-      email: 'juan@example.com',
-      institutional_email: 'jperez@universidad.edu',
-    };
-    setUser(userData);
-  }
+import './App.css';
 
-  /*
+function NavLinks() {
+  const { user } = useAuth();
+
   return (
-    <div>
-        <h1>UWay - Inicio</h1>
-        {user ? (
-            <Profile user={user} />
-        ) : (
-            <div>
-                <p>No has iniciado sesión.</p>
-                <button onClick={fakeLogin}>Iniciar sesión (falsa)</button>
-            </div>
-        )}
-    </div>
+    <nav>
+      <Link to="/">Inicio</Link>
+      {' | '}
+      {!user ? (
+        <>
+          <Link to="/login">Login</Link>
+          {' | '}
+          <Link to="/register">Registro</Link>
+        </>
+      ) : (
+        <Link to="/profile">Perfil</Link>
+      )}
+    </nav>
   );
-  */
+}
 
+export default function App() {
   return (
-    <Router>
-      <div>
-        <h1>UWay</h1>
-        <nav>
-          <Link to="/login">Login</Link> |{' '}
-          <Link to="/register">Register</Link>
-        </nav>
+    <AuthProvider>
+      <Router>
+        <NavLinks />
+
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Login />} /> 
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <h2>Bienvenido a UWay</h2>
+              </RequireAuth>
+            }
+          />
         </Routes>
-      </div>
-    </Router>
-  ); 
+      </Router>
+    </AuthProvider>
+  );
 }
-
-export default App
