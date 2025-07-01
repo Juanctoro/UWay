@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Profile from './Profile';
 
 const API_BASE = 'http://localhost:8000/';
 
@@ -53,11 +54,11 @@ export default function Login() {
 
     if (user) {
         return (
-        <div>
-            <h3>Welcome, {user.names}</h3>
-            <button onClick={handleLogout}>Logout</button>
-            {message && <div>{message}</div>}
-        </div>
+            <div>
+                <Profile user = {user} />
+                <button onClick = {handleLogout}>Logout</button>
+                {message && <div>{message}</div>}
+            </div>
         );
     }
 

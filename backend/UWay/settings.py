@@ -74,6 +74,11 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 CORS_ALLOW_ALL_ORIGINS = True  # solo en desarrollo
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Puerto de Vite
+]
+
 ROOT_URLCONF = 'UWay.urls'
 
 TEMPLATES = [
