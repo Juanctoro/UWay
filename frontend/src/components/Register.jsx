@@ -47,9 +47,9 @@ export default function Register() {
           { name: 'phone', label: 'Teléfono' },
           { name: 'address', label: 'Dirección' },
           { name: 'email', label: 'Email' },
-          { name: 'institutional_email', label: 'Email institucional' },
+          { name: 'institutional_email', label: 'Email institucional', required: false },
           { name: 'password', label: 'Contraseña', type: 'password' },
-        ].map(({ name, label, type = 'text' }) => (
+        ].map(({ name, label, type = 'text', required = true }) => (
           <div key={name}>
             <label>{label}:</label>
             <input
@@ -57,7 +57,7 @@ export default function Register() {
               name={name}
               value={formData[name]}
               onChange={handleChange}
-              required
+              required={required}
             />
             {errors[name] && (
               <div style={{ color: 'red' }}>

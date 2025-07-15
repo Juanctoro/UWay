@@ -84,6 +84,11 @@ def send_email_to_driver(sender, instance, created, **kwargs):
     if getattr(instance, '_should_send_activation_email', False):
         send_user_confirmation_email(instance.user)
 
+# Señal de envío al crear usuario
+@receiver(post_save, sender=User)
+def send_welcome_to_user(sender, instance, created, **kwargs):
+    send_user_confirmation_email(instance)
+
 # Señal de envío al crear reserva
 @receiver(post_save, sender=Reservation)
 def send_reservation_email_to_user(sender, instance, created, **kwargs):

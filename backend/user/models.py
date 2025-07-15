@@ -9,7 +9,7 @@ class User(AbstractUser):
     phone              = models.CharField('Teléfono', max_length=30, blank=True)
     address           = models.CharField('Dirección', max_length=255, blank=True)
     email                 = models.EmailField('Email', unique=True)
-    institutional_email   = models.EmailField('Email institucional', unique=True, blank=True)
+    institutional_email   = models.EmailField('Email institucional', unique=True, null=True,blank=True)
     password              = models.CharField('Email institucional', max_length=255)
     institution          = models.ForeignKey(
                              Institution,

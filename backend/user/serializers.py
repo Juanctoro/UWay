@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email', 'institutional_email',
             'institution', 'password',
         ]
+        read_only_fields=['institution','password']
 
     def create(self, validated_data):
         pwd = validated_data.pop('password')

@@ -163,5 +163,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'reinel.vargas@correounivalle.edu.co'
-EMAIL_HOST_PASSWORD = 'wbmd wzkm ylec siom '
+EMAIL_HOST_PASSWORD = 'rrub amtb bswo qppo'
 DEFAULT_FROM_EMAIL = 'UWay <reinel.vargas@correounivalle.edu.co>'
