@@ -7,7 +7,7 @@ import RequireAuth from './components/RequireAuth';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import Landing from './components/UWayLanding';
-import Register from './components/Register';
+import Register from './components/UWayRegister';
 
 export default function App() {
   return (
