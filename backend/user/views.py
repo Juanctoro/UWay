@@ -26,6 +26,11 @@ class UserViewSet(viewsets.ModelViewSet):
             'user_dni': user.dni,
             'total_reservations': total
             })
+
+    @action(detail=True, methods=['get'])
+    def get_user_role(self, request, dni=None):
+        serializer = UserRoleSerializer(User, many=False)
+        return Response ({serializer.data})
     
     # Reservas hechas por cada usuario
     @action(detail=False, methods=['get'])
