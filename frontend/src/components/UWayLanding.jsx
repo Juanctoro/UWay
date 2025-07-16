@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import "./styles/UWayLanding.css";
+import { useAuth } from "../context/AuthContext"; 
 
 const UWayLanding = () => {
   const navigate = useNavigate();
+  const { user, loading, logout } = useAuth(); 
+
 
   /* Icon components */
   const ShieldIcon = () => (
@@ -59,18 +62,37 @@ const UWayLanding = () => {
           <div className="uway-nav-buttons">
             <button className="uway-button uway-button--ghost">About</button>
             <button className="uway-button uway-button--ghost">Contact</button>
-            <button
-              className="uway-button uway-button--outline"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
-            <button
-              className="uway-button uway-button--primary"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </button>
+            {user ? (
+              <>
+                <button
+                  className="uway-button uway-button--outline"
+                  onClick={() => navigate("/profile")}
+                >
+                  Profile
+                </button>
+                <button
+                  className="uway-button uway-button--ghost"
+                  onClick={logout}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="uway-button uway-button--outline"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </button>
+                <button
+                  className="uway-button uway-button--primary"
+                  onClick={() => navigate("/register")}
+                >
+                  Register
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
