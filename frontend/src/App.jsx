@@ -15,6 +15,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element = {<Profile />} />
 
         /*
         {/* Ruta protegida }
@@ -31,5 +32,5 @@ export default function App() {
         */
       </Routes>
     </Router>
-  );
+  )
 }

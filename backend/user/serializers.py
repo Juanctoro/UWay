@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from .models import User
+from student.models import Student
+from teacher.models import Teacher
+from driver.models import Driver
+from admin_user.models import Admin_User
 
 class UserSerializer(serializers.ModelSerializer):
     # recibir password en claro, no devolverlo
     password = serializers.CharField(write_only=True)
+    roles = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -11,9 +16,20 @@ class UserSerializer(serializers.ModelSerializer):
             'dni', 'names', 'lastnames',
             'phone', 'address',
             'email', 'institutional_email',
-            'institution', 'password',
+            'institution', 'password','roles'
         ]
-        read_only_fields=['institution','password']
+
+    def get_roles(self, obj):
+        roles = []
+        if Student.objects.filter(user=obj).exists():
+            roles.append("student")
+        if Teacher.objects.filter(user=obj).exists():
+            roles.append("teacher")
+        if Driver.objects.filter(user=obj).exists():
+            roles.append("driver")
+        if Admin_User.objects.filter(user=obj).exists():
+            roles.append("admin")
+        return roles
 
     def create(self, validated_data):
         pwd = validated_data.pop('password')
