@@ -66,6 +66,12 @@ const UWayLanding = () => {
               <>
                 <button
                   className="uway-button uway-button--outline"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Dashboard
+                </button>
+                <button
+                  className="uway-button uway-button--outline"
                   onClick={() => navigate("/profile")}
                 >
                   Profile

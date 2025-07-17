@@ -77,7 +77,7 @@ const UWayRegister = () => {
           </div>
           <div className="nav-buttons">
             <button onClick={() => navigate("/")} className="btn-ghost">Volver al Inicio</button>
-            <button className="btn-outline">Iniciar Sesión</button>
+            <button onClick={() => navigate("/login")} className="btn-outline">Iniciar Sesión</button>
           </div>
         </div>
       </nav>
