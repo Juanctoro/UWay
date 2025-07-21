@@ -26,25 +26,6 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
 
-// Componente para mostrar resultados de búsqueda
-function SearchResults({ results, onSelect }) {
-  return (
-    <div className="search-results-container">
-      <ul className="search-results-list">
-        {results.map((r, i) => (
-          <li key={i} className="search-result-item" onClick={() => onSelect(r)}>
-            <FaMapMarkerAlt className="result-icon" />
-            <span className="result-text">{r.display_name}</span>
-          </li>
-        ))}
-      </ul>
-      <button className="search-results-close" onClick={() => onSelect(null)}>
-        <FaTimes />
-      </button>
-    </div>
-  );
-}
-
 // Captura clicks para agregar puntos
 function ClickHandler({ onAdd }) {
   useMapEvents({
@@ -55,6 +36,7 @@ function ClickHandler({ onAdd }) {
   return null;
 }
 
+// Cambiar de lugar el zoom
 function ZoomControlTopRight() {
   const map = useMap();
 
@@ -70,6 +52,7 @@ function ZoomControlTopRight() {
   return null;
 }
 
+// Rutas
 function RoutingControl({ points }) {
   const map = useMap();
 
@@ -89,19 +72,14 @@ function RoutingControl({ points }) {
       draggableWaypoints: false,
     }).addTo(map);
 
-    const panel = document.querySelector('.leaflet-routing-container');
-    if (panel) panel.remove();
-
-    const btn = document.querySelector('.leaflet-routing-collapse-btn');
-    if (btn) btn.remove();
+    document.querySelector('.leaflet-routing-container')?.remove();
+    document.querySelector('.leaflet-routing-collapse-btn')?.remove();
 
     return () => map.removeControl(control);
   }, [map, points]);
 
   return null;
 }
-
-
 
 // Recentrar mapa cuando cambia el centro
 function Recenter({ center }) {
@@ -154,11 +132,14 @@ export default function Dashboard() {
         const { lat, lng } = userLocation;
         bboxParams = `&viewbox=${lng - d},${lat + d},${lng + d},${lat - d}&bounded=1`;
       }
-      const url =
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          searchQuery
-        )}&format=json&limit=5${bboxParams}`;
+
+      const url = `/nominatim/search?` +
+        `q=${encodeURIComponent(searchQuery)}` +
+        `&format=json&limit=5` +
+        bboxParams;
+
       const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setSearchResults(data);
     } catch (err) {
@@ -261,14 +242,28 @@ export default function Dashboard() {
               className="search-input"
               placeholder="Buscar lugar en la ciudad"
             />
-            <button className="search-button" type="submit">
+            <button className="search-button" type="button" onClick={handleSearch}>
               <FaSearch />
             </button>
           </form>
+
+          {searchResults.length > 0 && (
+            <div className="search-dropdown">
+              <ul className="search-results-list">
+                {searchResults.map((r, i) => (
+                  <li key={i} className="search-result-item" onClick={() => handleSelectResult(r)}>
+                    <FaMapMarkerAlt className="result-icon" />
+                    <span className="result-text">{r.display_name}</span>
+                  </li>
+                ))}
+              </ul>
+              <button className="search-results-close" onClick={() => handleSelectResult(null)}>
+                <FaTimes />
+              </button>
+            </div>
+          )}
         </div>
-        {searchResults.length > 0 && (
-          <SearchResults results={searchResults} onSelect={handleSelectResult} />
-        )}
+
         <MapContainer center={mapCenter} zoomControl={false} zoom={13} className="map-container">
           <ZoomControlTopRight />
                     <TileLayer
