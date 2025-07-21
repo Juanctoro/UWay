@@ -21,13 +21,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_roles(self, obj):
         roles = []
-        if Student.objects.filter(user=obj).exists():
+        student_obj = Student.objects.filter(user=obj).first()
+        teacher_obj = Teacher.objects.filter(user=obj).first()
+        driver_obj = Driver.objects.filter(user=obj).first()
+        admin_obj = Admin_User.objects.filter(user=obj).first()
+
+        if student_obj and student_obj.is_active:
             roles.append("student")
-        if Teacher.objects.filter(user=obj).exists():
+        if teacher_obj and teacher_obj.is_active:
             roles.append("teacher")
-        if Driver.objects.filter(user=obj).exists():
+        if driver_obj and driver_obj.is_approved:
             roles.append("driver")
-        if Admin_User.objects.filter(user=obj).exists():
+        if admin_obj and admin_obj.is_active:
             roles.append("admin")
         return roles
 

@@ -20,7 +20,7 @@ class Driver(models.Model):
         related_name='drivers'
     )
     license_number = models.CharField('License Number', max_length=50)
-    papers         = models.URLField('Papers URL', max_length=200)
+    papers         = models.URLField('Papers URL', max_length=200, blank=True, null=True)
     is_approved    = models.BooleanField('Approved', default=False)
     current_location = gis_models.PointField('Current Location', srid=4326, null=True, blank=True)
 

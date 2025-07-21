@@ -8,6 +8,7 @@ import Login from './components/UWayLogin';
 import Profile from './components/UWayProfile';
 import Landing from './components/UWayLanding';
 import Register from './components/UWayRegister';
+import DriverForm from './components/UWayDriverForm';
 
 export default function App() {
   return (
@@ -17,6 +18,8 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element = {<Profile />} />
+          <Route path="/driver_form" element = {<DriverForm />} />
+
         </Routes>/
       </Router>
   );
