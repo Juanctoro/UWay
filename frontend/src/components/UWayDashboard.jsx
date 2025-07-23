@@ -3,6 +3,8 @@ import {
   FaTimes,
   FaSearch,
   FaMapMarkerAlt,
+  FaCog,
+  FaRoute,
   FaChartBar,
   FaUserCog,
   FaHistory,
@@ -12,7 +14,7 @@ import {
   FaHeadset,
   FaBars
 } from 'react-icons/fa';
-import './styles/UWayDashboard.css';
+import Sidebar from './Sidebar';
 import {
   MapContainer,
   TileLayer,
@@ -25,6 +27,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
+import './styles/UWayDashboard.css';
+import { useAuth } from '../context/AuthContext';
 
 // Captura clicks para agregar puntos
 function ClickHandler({ onAdd }) {
@@ -60,7 +64,7 @@ function RoutingControl({ points }) {
     if (points.length < 2) return;
 
     const control = L.Routing.control({
-      waypoints: points.map((p) => L.latLng(p.lat, p.lng)),
+      waypoints: points.map(p => L.latLng(p.lat, p.lng)),
       lineOptions: { styles: [{ color: '#7e22ce', weight: 4 }] },
       altLineOptions: { styles: [{ color: '#7e22ce', opacity: 0.3, weight: 3 }] },
       routeWhileDragging: true,
@@ -69,7 +73,7 @@ function RoutingControl({ points }) {
       show: false,
       createMarker: () => null,
       addWaypoints: false,
-      draggableWaypoints: false,
+      draggableWaypoints: false
     }).addTo(map);
 
     document.querySelector('.leaflet-routing-container')?.remove();
@@ -91,23 +95,17 @@ function Recenter({ center }) {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [points, setPoints] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([4.60971, -74.08175]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Añadir y eliminar puntos
-  const addPoint = (latlng) => setPoints((prev) => [...prev, latlng]);
-  const removePoint = (idx) => setPoints((prev) => prev.filter((_, i) => i !== idx));
+  const addPoint = latlng => setPoints(prev => [...prev, latlng]);
+  const removePoint = idx => setPoints(prev => prev.filter((_, i) => i !== idx));
 
-  // Iconos de Leaflet y personalizado para puntos
-  const defaultIcon = new L.Icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-    iconAnchor: [12, 41]
-  });
   const userIcon = new L.Icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
     iconSize: [30, 30],
@@ -115,14 +113,13 @@ export default function Dashboard() {
   });
   const getCircleIcon = () =>
     new L.DivIcon({
-      html: '<div style=\"background:#7e22ce;width:16px;height:16px;border-radius:50%;border:2px solid white;\"></div>',
+      html: '<div style="background:#7e22ce;width:16px;height:16px;border-radius:50%;border:2px solid white;"></div>',
       className: 'circle-icon',
       iconSize: [20, 20],
       iconAnchor: [10, 10]
     });
 
-  // Búsqueda con Nominatim limitada a ciudad actual
-  const handleSearch = async (e) => {
+  const handleSearch = async e => {
     e.preventDefault();
     if (!searchQuery) return;
     try {
@@ -132,12 +129,11 @@ export default function Dashboard() {
         const { lat, lng } = userLocation;
         bboxParams = `&viewbox=${lng - d},${lat + d},${lng + d},${lat - d}&bounded=1`;
       }
-
-      const url = `/nominatim/search?` +
+      const url =
+        `/nominatim/search?` +
         `q=${encodeURIComponent(searchQuery)}` +
         `&format=json&limit=5` +
         bboxParams;
-
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -147,8 +143,7 @@ export default function Dashboard() {
     }
   };
 
-  // Seleccionar o cerrar resultados
-  const handleSelectResult = (r) => {
+  const handleSelectResult = r => {
     if (r) {
       const lat = parseFloat(r.lat);
       const lng = parseFloat(r.lon);
@@ -159,7 +154,6 @@ export default function Dashboard() {
     setSearchQuery('');
   };
 
-  // Obtener ubicación al montar
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -168,80 +162,68 @@ export default function Dashboard() {
         setUserLocation({ lat: latitude, lng: longitude });
         setMapCenter([latitude, longitude]);
       },
-      (err) => console.warn('Geolocalización denegada', err),
+      err => console.warn('Geolocalización denegada', err),
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }, []);
 
+  const secondaryMenu = [];
+  if(user?.roles?.includes('admin')) {
+    secondaryMenu.push({ label: 'Panel administrativo', icon: FaUniversity, path: '/adminPanel'});
+  } else if (user?.roles?.includes('driver')) {
+    secondaryMenu.push(
+      { label: 'Programar viaje', icon: FaCar, path: '/scheduleTrip' },
+      { label: 'Mis viajes', icon: FaRoute, path: '/myTrips' }
+    );
+  }
+
+  const primaryMenu = [
+    {
+      label: 'Mi ubicación',
+      icon: FaMapMarkerAlt,
+      onClick: () =>
+        userLocation && setMapCenter([userLocation.lat, userLocation.lng]),
+      className: 'locate-button-sidebar'
+    },
+    { label: 'Perfil', icon: FaUser, path: '/profile' },
+    { label: 'Configuración', icon: FaCog, path: '/profile.settings' },
+    { label: 'Historial', icon: FaHistory, path: '/profile.history' },
+  ];
+
+  const supportSection = {
+    text: '¿Necesitas soporte o deseas reportar algún fallo?',
+    button: { icon: FaHeadset, label: 'Contacto', onClick: () => {} }
+  };
+
   return (
     <div className="dashboard-container">
-      <aside className={`sidebar-dashboard ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-header-dashboard">
-          <div className="logo-dashboard">
-            <span className="logo-dashboard-text">Ugüee</span>
-            <button className="close-button" onClick={() => setSidebarOpen(false)}>
-              <FaTimes />
-            </button>
-          </div>
-          <p className="tagline">Tu campus, tu viaje, a tu ritmo.</p>
-        </div>
-        <hr></hr>
-        <ul className="menu">
-          <li
-            className="menu-item locate-button-sidebar"
-            onClick={() =>
-              userLocation && setMapCenter([userLocation.lat, userLocation.lng])
-            }
-          >
-            <FaMapMarkerAlt className="icon" />Mi ubicación
-          </li>
-          <li className="menu-item">
-            <FaChartBar className="icon" />Estadísticas
-          </li>
-          <li className="menu-item">
-            <FaUserCog className="icon" />Asignar Roles
-          </li>
-          <li className="menu-item">
-            <FaHistory className="icon" />Historial
-          </li>
-          <li className="menu-item">
-            <FaUser className="icon" />Registrar Usuarios
-          </li>
-        </ul>
-        <hr />
-        <ul className="menu">
-          <li className="menu-item">
-            <FaUniversity className="icon" />Registrar Instituciones
-          </li>
-          <li className="menu-item">
-            <FaCar className="icon" />Registrar Conductores
-          </li>
-        </ul>
-        <hr />
-        <div className="support">
-          <p>¿Necesitas soporte o deseas reportar algún fallo?</p>
-          <button className="contact-button">
-            <FaHeadset className="icon" />Contacto
-          </button>
-        </div>
-        
-      </aside>
-      
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        sections={[
+          { items: primaryMenu },
+          ...(secondaryMenu.length
+              ? [{ items: secondaryMenu }]
+              : []
+          )
+        ]}
+        support={supportSection} />
+
       <main className="map-view">
         {!sidebarOpen && (
           <button className="hamburger-button" onClick={() => setSidebarOpen(true)}>
             <FaBars />
           </button>
         )}
+
         <div className="search-bar">
           <form onSubmit={handleSearch} className="search-form">
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="search-input"
-              placeholder="Buscar lugar en la ciudad"
-            />
+              placeholder="Buscar lugar en la ciudad" />
             <button className="search-button" type="button" onClick={handleSearch}>
               <FaSearch />
             </button>
@@ -266,11 +248,10 @@ export default function Dashboard() {
 
         <MapContainer center={mapCenter} zoomControl={false} zoom={13} className="map-container">
           <ZoomControlTopRight />
-                    <TileLayer
+          <TileLayer
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             attribution="© OpenStreetMap contributors © CARTO"
-            subdomains="abcd"
-          />
+            subdomains="abcd" />
           <Recenter center={mapCenter} />
           {userLocation && (
             <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
@@ -292,13 +273,14 @@ export default function Dashboard() {
           ))}
           {points.length >= 2 && <RoutingControl points={points} />}
         </MapContainer>
+
         <div className="points-list">
           <h4>Puntos seleccionados</h4>
           <ol>
             {points.map((p, i) => (
               <li key={i}>
                 <span>{i + 1}. {p.lat.toFixed(5)}, {p.lng.toFixed(5)}</span>
-                <button className="btn-remove-list" onClick={() => removePoint(i)}><FaTimes />X</button>
+                <button className="btn-remove-list" onClick={() => removePoint(i)}><FaTimes /> X</button>
               </li>
             ))}
           </ol>

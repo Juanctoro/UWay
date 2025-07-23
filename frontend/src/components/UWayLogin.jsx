@@ -44,7 +44,7 @@ const UWayLogin = () => {
       await login({ dni: formData.dni, password: formData.password });
       console.log("Login submitted:", formData);
       alert("Login exitoso! (Este es solo un ejemplo)");
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error("Login error:", error);
       alert("Error en el login. Por favor intenta de nuevo.");
