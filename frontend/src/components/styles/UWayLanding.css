@@ -1,0 +1,342 @@
+/* UWayLanding.css */
+
+/* Base container */
+.uway-container {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(166, 85, 247, 0.05),
+    #ffffff,
+    rgba(166, 85, 247, 0.1)
+  );
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Navigation */
+.uway-nav {
+  padding: 24px 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.uway-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.uway-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.uway-logo-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #a855f7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+.uway-logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+.uway-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.uway-button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+.uway-button--ghost {
+  background-color: transparent;
+  color: #1a1a1a;
+}
+.uway-button--outline {
+  background-color: white;
+  color: #1a1a1a;
+  border: 1px solid #e5e7eb;
+}
+.uway-button--primary {
+  background-color: #a855f7;
+  color: white;
+}
+.uway-button--large {
+  padding: 24px 32px;
+  font-size: 18px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Sections */
+.uway-section {
+  padding: 80px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.uway-section--center {
+  text-align: center;
+}
+.uway-section--alt {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+/* Hero */
+.uway-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(166, 85, 247, 0.1);
+  color: #a855f7;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(166, 85, 247, 0.2);
+  margin-bottom: 24px;
+}
+.uway-hero-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: bold;
+  margin: 0 0 24px;
+  line-height: 1.1;
+}
+.uway-gradient {
+  background: linear-gradient(to right, #a855f7, rgba(166, 85, 247, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.uway-lead {
+  font-size: 20px;
+  color: #6b7280;
+  margin: 0 auto 32px;
+  max-width: 768px;
+  line-height: 1.6;
+}
+.uway-button-group {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 64px;
+  flex-wrap: wrap;
+}
+.uway-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-top: 64px;
+}
+.uway-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(166, 85, 247, 0.2);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+.uway-card-icon {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(166, 85, 247, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #a855f7;
+}
+
+/* Mission / Feature list */
+.uway-feature-list {
+  text-align: left;
+  margin: 32px 0;
+}
+.uway-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Headings & text */
+.uway-h2 {
+  font-size: clamp(1.875rem, 4vw, 2.25rem);
+  font-weight: bold;
+  margin: 0 0 24px;
+  color: #1a1a1a;
+}
+.uway-h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: #1a1a1a;
+}
+.uway-text {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Contact & CTA */
+.uway-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 32px;
+  margin-bottom: 48px;
+}
+.uway-cta-section {
+  background: linear-gradient(to right, rgba(166, 85, 247, 0.1), rgba(166, 85, 247, 0.05));
+  border-radius: 24px;
+  padding: clamp(32px, 5vw, 48px);
+  text-align: center;
+}
+
+/* Footer */
+.uway-footer {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  padding: 48px 32px;
+}
+.uway-footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.uway-footer-links {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+/* Hover effects */
+.uway-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.uway-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #a855f7;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
+}
+
+/* Responsive dark‑mode override */
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+}
+
+/* Tablet / small desktop tweaks */
+@media (max-width: 768px) {
+  .uway-nav-buttons {
+    gap: 8px;
+  }
+  .uway-nav-buttons button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .uway-hero-title {
+    font-size: 2.5rem !important;
+  }
+  .uway-button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  .uway-grid {
+    grid-template-columns: 1fr;
+  }
+  .uway-footer-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .uway-section {
+    padding: 40px 16px;
+  }
+  .uway-nav {
+    padding: 16px;
+  }
+  .uway-card {
+    padding: 24px;
+  }
+  .uway-hero-title {
+    font-size: 2rem !important;
+  }
+  .uway-lead {
+    font-size: 18px;
+  }
+}
+
+
+.uway-feature-item {
+  display: flex;
+  align-items: center;   /* centra verticalmente icono + texto */
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.uway-check-icon {
+  width: 20px;
+  height: 20px;
+  color: #a855f7;        /* mismo color que el badge */
+  flex-shrink: 0;        /* que no se reduzca si falta espacio */
+}

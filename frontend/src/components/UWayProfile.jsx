@@ -73,11 +73,17 @@ const UWayProfile = () => {
       color: "#1a1a1a",
       boxSizing: "border-box",
     },
-    nav: {
+    nav: {   
+      position: "fixed",              // 👉 Fijar la barra arriba
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000,                   // 👉 Asegurar que esté por encima de todo
       padding: "24px 32px",
       backgroundColor: "rgba(255, 255, 255, 0.8)",
       backdropFilter: "blur(8px)",
       borderBottom: "1px solid rgba(166, 85, 247, 0.1)",
+      width: "100%",         
     },
     navContainer: {
       display: "flex",
@@ -116,10 +122,11 @@ const UWayProfile = () => {
     main: {
       maxWidth: "1280px",
       margin: "0 auto",
-      padding: "40px 32px",
+      padding: "120px 32px",
       display: "grid",
       gridTemplateColumns: "300px 1fr",
       gap: "40px",
+      overflowX: "hidden"
     },
     sidebar: {
       backgroundColor: "rgba(255, 255, 255, 0.95)",
@@ -531,10 +538,22 @@ const UWayProfile = () => {
                   .map((n) => n[0])
                   .join("")}
               </div>
-              <h2 style={styles.userName}>{userData.name}</h2>
-              <p style={styles.userRole}>
-                {translateRoles(userData.role)} - {userData.institution}
-              </p>
+              {userData.role.length > 0 ? (
+                <div>
+                  <h2 style={styles.userName}>{userData.name}</h2>
+                  <p style={styles.userRole}>
+                    {translateRoles(userData.role)} - {userData.institution}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <h2 style={styles.userName}>{userData.name}</h2>
+                  <p style={styles.userRole}>
+                    Cuenta sin verificar
+                  </p>
+                </div>
+              )}
+              
 
               <div
                 style={{
@@ -902,7 +921,8 @@ const UWayProfile = () => {
                 </div>
 
                 {/* Acciones Rápidas - SEGUNDO */}
-                <div>
+                {userData.role.length > 0 && (
+                  <div>
                   <h2
                     style={{
                       fontSize: "20px",
@@ -923,6 +943,8 @@ const UWayProfile = () => {
                     ))}
                   </div>
                 </div>
+                )}
+                
               </>
             )}
 
@@ -1118,7 +1140,7 @@ const UWayProfile = () => {
                       title: "Contactos de Emergencia",
                       description:
                         "Añade contactos para situaciones de emergencia",
-                      icon: "���",
+                      icon: "🚨",
                     }}
                     onClick={handleActionClick}
                   />

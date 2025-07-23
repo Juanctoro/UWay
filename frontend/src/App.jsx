@@ -1,14 +1,12 @@
 // src/App.jsx
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import RequireAuth from './components/RequireAuth';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Login from './components/UWayLogin';
-import Profile from './components/UWayProfile';
 import Landing from './components/UWayLanding';
 import Register from './components/UWayRegister';
 import DriverForm from './components/UWayDriverForm';
+import Login from './components/UWayLogin';
+import Dashboard from './components/UWayDashboard';
+import RequireAuth from './components/RequireAuth';
 
 export default function App() {
   return (
@@ -19,7 +17,14 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element = {<Profile />} />
           <Route path="/driver_form" element = {<DriverForm />} />
-
+          <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
         </Routes>/
       </Router>
   );

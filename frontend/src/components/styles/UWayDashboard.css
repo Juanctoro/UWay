@@ -1,0 +1,407 @@
+/* ---------- Reset y base ---------- */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Contenedor principal ---------- */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  overflow: visible;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar-dashboard {
+  width: 280px;
+  background-color: #fff;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.sidebar-header-dashboard {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.logo-dashboard-text {
+  font-size: 40px;
+  font-weight: bold;
+  color: #7e22ce;
+}
+
+.logo-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* separa los elementos */
+}
+
+/* Menús */
+.menu {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+  color: #374151;
+}
+
+.menu-item:hover {
+  background-color: #f3f4f6;
+}
+
+.icon {
+  font-size: 18px;
+  color: #7e22ce;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Soporte / contacto */
+.support {
+  margin-top: auto;
+  padding: 0 20px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.contact-button {
+  margin-top: 8px;
+  background-color: #f3e8ff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #7e22ce;
+  transition: background 0.15s;
+}
+
+.contact-button:hover {
+  background-color: #e9d5ff;
+}
+
+/* ---------- Vista del mapa ---------- */
+.map-view {
+  flex-grow: 1;
+  position: relative;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  z-index: 0; 
+}
+
+/* ---------- Barra de búsqueda ---------- */
+.search-bar {
+  position: relative;
+  top: 20px;
+  left: 55%;
+  transform: translateX(-50%);
+  display: flex;
+  width: 360px;      
+  background: white;
+  padding: 0.25rem;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);  /* justo debajo */
+  left: 0;
+  width: 100%;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: .5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 24px 0 0 24px;
+  outline: none;
+  background: #f9fafb;
+  color: #374151;
+  caret-color: #7e22ce;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-input:focus {
+  background: #ffffff;
+  border: 1px solid #7e22ce;
+}
+
+.search-button {
+  width: 48px;
+  border: none;
+  background-color: #7e22ce;
+  color: #fff;
+  border-radius: 0 24px 24px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button:hover {
+  background-color: #581c87;
+}
+
+/* ---------- Contenedor del mapa ---------- */
+.map-container {
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* ---------- Lista de puntos ---------- */
+.points-list {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 16px;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 20px;
+}
+
+.points-list h4 {
+  margin: 0 0 8px;
+  color: #374151;
+}
+
+.points-list ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.points-list li {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Botones eliminar */
+.btn-remove,
+.btn-remove-list {
+  background: #581c87;
+  color: #ffffff;
+  border: none;
+  border-radius: 15%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-left: 10px;
+  margin-bottom: 6px;
+}
+
+/* ---------- Sidebar Collapsible ---------- */
+.dashboard-container.sidebar-closed .sidebar {
+  width: 60px;
+  overflow: hidden;
+}
+
+.dashboard-container.sidebar-open .sidebar {
+  width: 280px;
+}
+
+/* Ensures content shift */
+.dashboard-container.sidebar-closed .map-view {
+  margin-left: 60px;
+}
+
+.dashboard-container.sidebar-open .map-view {
+  margin-left: 280px;
+}
+
+/* ---------- Búsqueda desplegable ---------- */
+
+.search-results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.search-result-item:hover {
+  background-color: #f3f4f6;
+}
+
+.result-icon {
+  margin-right: 0.5rem;
+  color: #7e22ce;
+}
+
+.search-results-close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.close-button {
+  background: #7e22ce;
+  border: none;
+  color: white;
+}
+
+
+/* ---------- Responsive general ---------- */
+/* Oculta en móviles */
+@media (max-width: 768px) {
+  .sidebar-dashboard {
+    transform: translateX(-100%);
+  }
+  .sidebar-dashboard.open {
+    transform: translateX(0);
+  }
+
+  .hamburger-button {
+    position: fixed;
+    top: 20px;
+    left: 1rem;
+    background: #7e22ce;
+    border: none;
+    color: white;
+    z-index: 1000;
+  }
+
+  .search-bar {
+    width: 250px;
+    left: 5%;
+    transform: none;
+    align-self: center;
+  }
+
+  .points-list {
+    top: auto;
+    bottom: 80px;
+  }
+
+}
+
+/* Mostrar siempre en tabletas */
+@media (max-width: 1024px)  {
+.sidebar-dashboard {
+    transform: translateX(-100%);
+  }
+  .sidebar-dashboard.open {
+    transform: translateX(0);
+  }
+
+  .hamburger-button {
+    position: fixed;
+    top: 20px;
+    left: 1rem;
+    background: #7e22ce;
+    border: none;
+    color: white;
+    z-index: 1000;
+  }
+
+  .search-bar {
+    width: 250px;
+    left: 5%;
+    transform: none;
+    align-self: center;
+  }
+
+  .points-list {
+    top: auto;
+    bottom: 80px;
+  }
+}
+
+/* Mostrar siempre en desktop */
+@media (min-width: 1024px){
+  .sidebar-dashboard {
+    transform: translateX(0);
+  }
+  .hamburger-button {
+    display: none;
+  }
+
+  .close-button {
+    display: none;
+  }
+}
+
+/* Sidebar base */
+.sidebar-dashboard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100%;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 1rem;
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+}
