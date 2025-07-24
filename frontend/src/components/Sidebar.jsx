@@ -8,8 +8,8 @@ export default function Sidebar({
   onClose,
   logoText = 'Ugüee',
   tagline = 'Tu campus, tu viaje, a tu ritmo.',
-  sections = [],       // Array de secciones: cada sección es { items: [ { label, icon: IconComponent, path?, className? } ] }
-  support              // { text: string, button: { icon: IconComponent, label: string, path? } }
+  sections = [],       // Array de secciones: cada sección es { items: [ { label, icon: IconComponent, path?, onClick?, className? } ] }
+  support              // { text: string, button: { icon: IconComponent, label: string, path?, onClick? } }
 }) {
   const navigate = useNavigate();
 
@@ -29,11 +29,17 @@ export default function Sidebar({
         <React.Fragment key={si}>
           <hr />
           <ul className="menu">
-            {section.items.map(({ label, icon: Icon, path, className }, i) => (
+            {section.items.map(({ label, icon: Icon, path, onClick, className }, i) => (
               <li
                 key={i}
                 className={`menu-item ${className || ''}`}
-                onClick={() => path && navigate(path)}
+                onClick={() => {
+                  if (onClick) {
+                    onClick();
+                  } else if (path) {
+                    navigate(path);
+                  }
+                }}
               >
                 <Icon className="icon" />
                 {label}
@@ -50,7 +56,13 @@ export default function Sidebar({
             <p>{support.text}</p>
             <button
               className="contact-button"
-              onClick={() => support.button.path && navigate(support.button.path)}
+              onClick={() => {
+                if (support.button.onClick) {
+                  support.button.onClick();
+                } else if (support.button.path) {
+                  navigate(support.button.path);
+                }
+              }}
             >
               <support.button.icon className="icon" />
               {support.button.label}

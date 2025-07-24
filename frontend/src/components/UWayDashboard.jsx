@@ -19,27 +19,38 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Estado para contar puntos y disparar recentrado
+  const [selectedPointsCount, setSelectedPointsCount] = useState(0);
+  const [centerUserFlag, setCenterUserFlag] = useState(false);
+
+  // Menú secundario (solo con al menos 2 puntos aparece 'Programar viaje')
   const secondaryMenu = [];
-  if (user?.roles?.includes('admin')) {
+  if (user?.roles?.includes('driver')) {
+    if (selectedPointsCount >= 2) {
+      secondaryMenu.push({
+        label: 'Programar viaje',
+        icon: FaCar,
+        path: '/scheduleTrip'
+      });
+    }
+    secondaryMenu.push({
+      label: 'Mis viajes',
+      icon: FaRoute,
+      path: '/myTrips'
+    });
+  } else if (user?.roles?.includes('admin')) {
     secondaryMenu.push({
       label: 'Panel administrativo',
       icon: FaUniversity,
       path: '/adminPanel'
     });
-  } else if (user?.roles?.includes('driver')) {
-    secondaryMenu.push(
-      { label: 'Programar viaje', icon: FaCar, path: '/scheduleTrip' },
-      { label: 'Mis viajes', icon: FaRoute, path: '/myTrips' }
-    );
   }
 
   const primaryMenu = [
     {
       label: 'Mi ubicación',
       icon: FaMapMarkerAlt,
-      onClick: () =>
-        user.location &&
-        window.map?.setView([user.location.lat, user.location.lng]),
+      onClick: () => setCenterUserFlag(f => !f),
       className: 'locate-button-sidebar'
     },
     { label: 'Perfil', icon: FaUser, path: '/profile' },
@@ -77,6 +88,8 @@ export default function Dashboard() {
         <MapView
           role={user?.roles?.includes('driver') ? 'driver' : 'user'}
           existingRoutes={[]}
+          onPointsChange={setSelectedPointsCount}
+          centerToUser={centerUserFlag}
         />
       </main>
     </div>

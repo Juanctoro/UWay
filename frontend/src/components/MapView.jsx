@@ -9,6 +9,7 @@ import {
   TileLayer,
   Marker,
   Popup,
+  Polyline,
   useMapEvents,
   useMap
 } from 'react-leaflet';
@@ -28,7 +29,7 @@ function ClickHandler({ onAdd }) {
   return null;
 }
 
-// Cambiar de lugar el zoom
+// Mueve el control de zoom a la esquina superior derecha
 function ZoomControlTopRight() {
   const map = useMap();
   useEffect(() => {
@@ -39,7 +40,7 @@ function ZoomControlTopRight() {
   return null;
 }
 
-// Rutas
+// Dibuja la ruta cuando hay al menos dos puntos
 function RoutingControl({ points }) {
   const map = useMap();
   useEffect(() => {
@@ -47,7 +48,7 @@ function RoutingControl({ points }) {
     const control = L.Routing.control({
       waypoints: points.map(p => L.latLng(p.lat, p.lng)),
       lineOptions: { styles: [{ color: '#7e22ce', weight: 4 }] },
-      altLineOptions: { styles: [{ color: '#7e22ce', opacity: 0.3, weight: 3 }] },
+      altLineOptions: [{ styles: [{ color: '#7e22ce', opacity: 0.3, weight: 3 }] }],
       routeWhileDragging: true,
       showAlternatives: true,
       fitSelectedRoutes: true,
@@ -56,6 +57,7 @@ function RoutingControl({ points }) {
       draggableWaypoints: false
     }).addTo(map);
 
+    // Oculta los botones extra del control
     document.querySelector('.leaflet-routing-container')?.remove();
     document.querySelector('.leaflet-routing-collapse-btn')?.remove();
 
@@ -64,16 +66,22 @@ function RoutingControl({ points }) {
   return null;
 }
 
-// Recentrar mapa cuando cambia el centro
+// Recentra cuando cambia center
 function Recenter({ center }) {
   const map = useMap();
   useEffect(() => {
     map.setView(center);
+    map.flyTo(center, 17, { animate: true });
   }, [center, map]);
   return null;
 }
 
-export default function MapView({ role, existingRoutes = [] }) {
+export default function MapView({
+  role,
+  existingRoutes = [],
+  onPointsChange,
+  centerToUser
+}) {
   const isDriver = role === 'driver';
 
   const [points, setPoints] = useState([]);
@@ -82,9 +90,22 @@ export default function MapView({ role, existingRoutes = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
+  // Informar al padre cuando cambian los puntos
+  useEffect(() => {
+    onPointsChange?.(points.length);
+  }, [points, onPointsChange]);
+
+  // Recentra a la ubicación del usuario cuando se active
+  useEffect(() => {
+    if (centerToUser && userLocation) {
+      setMapCenter([userLocation.lat, userLocation.lng]);
+    }
+  }, [centerToUser, userLocation]);
+
   const addPoint = latlng => setPoints(prev => [...prev, latlng]);
   const removePoint = idx => setPoints(prev => prev.filter((_, i) => i !== idx));
 
+  // Iconos personalizados
   const userIcon = new L.Icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
     iconSize: [30, 30],
@@ -98,7 +119,7 @@ export default function MapView({ role, existingRoutes = [] }) {
       iconAnchor: [10, 10]
     });
 
-  // Manejo de búsqueda
+  // Búsqueda con Nominatim
   const handleSearch = async e => {
     e.preventDefault();
     if (!searchQuery) return;
@@ -134,7 +155,7 @@ export default function MapView({ role, existingRoutes = [] }) {
     setSearchQuery('');
   };
 
-  // Geolocalización
+  // Obtener geolocalización del usuario
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
