@@ -1,10 +1,11 @@
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
-export const Bus = (props) => (
+export const Bus = ({ size = 24, ...props }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={23}
-    height={36}
+    width={size}
+    height={size}
+    viewBox="0 -8 18 60"
     fill="none"
     {...props}
   >

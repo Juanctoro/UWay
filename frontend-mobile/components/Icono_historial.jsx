@@ -1,10 +1,11 @@
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
-export const Icono_Historial = (props) => (
+export const Icono_Historial = ({ size = 24, ...props }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={21}
-    height={20}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
     fill="none"
     {...props}
   >

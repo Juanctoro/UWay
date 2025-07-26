@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
 import { Inicio as InicioIcon } from '../components/Icono_inicio';
 import { Icono_Historial as HistorialIcon } from '../components/Icono_historial';
 import { Cuenta } from '../components/Icono_cuenta';
@@ -17,9 +18,12 @@ import { Ubicacion } from '../components/Icono_ubicacion';
 import axios from 'axios';
 import { Image } from 'react-native';
 
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function HomeMenu({ onDestinationSelected }) {
+  
+  const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([
     { id: '1', name: 'Universidad del Valle Entrada 2', coords: { latitude: 3.3731, longitude: -76.5310 } },
@@ -63,15 +67,15 @@ export default function HomeMenu({ onDestinationSelected }) {
 
       {/* Bottom nav */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <InicioIcon width={28} height={28} />
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Inicio')}>
+          <InicioIcon width={28} height={28} /> 
           <Text style={styles.navTxt}>Inicio</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
           <HistorialIcon width={28} height={28} />
           <Text style={styles.navTxt}>Historial</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Cuenta')}>
           <Cuenta width={28} height={28} />
           <Text style={styles.navTxt}>Cuenta</Text>
         </TouchableOpacity>

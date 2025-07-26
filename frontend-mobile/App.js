@@ -10,6 +10,7 @@ import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import EmailSentScreen from './screens/EmailSentScreen';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
 import InicioScreen from './screens/InicioScreen';
+import CuentaScreen from './screens/CuentaScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="EmailSent" component={EmailSentScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <Stack.Screen name="Inicio" component={InicioScreen} />
+        <Stack.Screen name="Cuenta" component={CuentaScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
