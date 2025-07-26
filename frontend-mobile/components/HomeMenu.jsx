@@ -44,12 +44,12 @@ export default function HomeMenu({ onDestinationSelected }) {
         </View>
       </View>
 
-      {/* Search card */}
+     {/* Search card */}
       <View style={styles.searchCard}>
         <TextInput
           style={styles.input}
           placeholder="¿A donde vas?"
-          value={query}
+          onPress={() => navigation.navigate('ViajesDisponibles')}
           onChangeText={setQuery}
         />
         <FlatList

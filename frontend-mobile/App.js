@@ -13,6 +13,8 @@ import InicioScreen from './screens/InicioScreen';
 import CuentaScreen from './screens/CuentaScreen';
 import ScanQrScreen from './screens/ScanQrScreen';
 import HistorialScreen from './screens/HistorialScreen';
+import ViajesDisponiblesScreen from './screens/ViajesDisponiblesScreen';
+import RealizarViajeScreen from './screens/RealizarViajeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +32,8 @@ export default function App() {
         <Stack.Screen name="Cuenta" component={CuentaScreen} />
         <Stack.Screen name="ScanQr" component={ScanQrScreen} />
         <Stack.Screen name="Historial" component={HistorialScreen} />
+        <Stack.Screen name="ViajesDisponibles" component={ViajesDisponiblesScreen} />
+        <Stack.Screen name="RealizarViaje" component={RealizarViajeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

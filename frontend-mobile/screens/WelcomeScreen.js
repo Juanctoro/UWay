@@ -12,7 +12,7 @@ export default function WelcomeScreen({ navigation }) {
         <Image source={require('../assets/Logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
 
-      <Pressable style={styles.btn} onPress={() => navigation.navigate('Inicio')}>
+      <Pressable style={styles.btn} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.btnText}>Iniciar Sesion</Text>
       </Pressable>
 

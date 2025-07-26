@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setPwd}
             />
 
-            <RoundedButton title="Iniciar Sesion" onPress={() => alert('Login')} />
+            <RoundedButton title="Iniciar Sesion" onPress={() => navigation.navigate('Inicio')} />
 
             <Pressable onPress={() => navigation.navigate('ResetPassword')}>
               <Text style={styles.forgot}>¿Olvido su contraseña?</Text>
