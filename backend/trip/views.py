@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 import math
 from django.db.models import Count
 from utils.qr import generate_qr_url
@@ -114,3 +115,29 @@ class TripViewSet(viewsets.ModelViewSet):
             })
 
         return Response(results)
+    
+    @action(detail=False, methods=['get'], url_path='my-scheduled', permission_classes=[IsAuthenticated])
+    def my_scheduled_trips(self, request):
+        """
+        Retorna los viajes programados por el conductor autenticado.
+        """
+        user = request.user
+        trips = Trip.objects.filter(vehicle__driver__user=user, status='scheduled').order_by('-start_time')
+
+        serializer = TripSerializer(trips, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'], url_path='start', permission_classes=[IsAuthenticated])
+    def start_trip(self, request, pk=None):
+        trip = self.get_object()
+        user = request.user
+
+        if trip.vehicle.driver != user:
+            return Response({"detail": "No autorizado para iniciar este viaje."}, status=403)
+
+        if trip.status != 'scheduled':
+            return Response({"detail": "Este viaje ya fue iniciado o finalizado."}, status=400)
+
+        trip.status = 'in_progress'
+        trip.save()
+        return Response({"detail": "Viaje iniciado exitosamente."})

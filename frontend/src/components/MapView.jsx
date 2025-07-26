@@ -92,7 +92,7 @@ export default function MapView({
 
   // Informar al padre cuando cambian los puntos
   useEffect(() => {
-    onPointsChange?.(points.length);
+    onPointsChange?.(points); 
   }, [points, onPointsChange]);
 
   // Recentra a la ubicación del usuario cuando se active
