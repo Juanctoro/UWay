@@ -71,7 +71,7 @@ export default function HomeMenu({ onDestinationSelected }) {
           <InicioIcon width={28} height={28} /> 
           <Text style={styles.navTxt}>Inicio</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Historial')}>
           <HistorialIcon width={28} height={28} />
           <Text style={styles.navTxt}>Historial</Text>
         </TouchableOpacity>

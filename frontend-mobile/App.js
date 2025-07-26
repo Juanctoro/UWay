@@ -11,6 +11,8 @@ import EmailSentScreen from './screens/EmailSentScreen';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
 import InicioScreen from './screens/InicioScreen';
 import CuentaScreen from './screens/CuentaScreen';
+import ScanQrScreen from './screens/ScanQrScreen';
+import HistorialScreen from './screens/HistorialScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +28,8 @@ export default function App() {
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <Stack.Screen name="Inicio" component={InicioScreen} />
         <Stack.Screen name="Cuenta" component={CuentaScreen} />
+        <Stack.Screen name="ScanQr" component={ScanQrScreen} />
+        <Stack.Screen name="Historial" component={HistorialScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

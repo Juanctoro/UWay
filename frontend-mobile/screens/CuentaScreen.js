@@ -92,7 +92,7 @@ export default function CuentaScreen() {
           title="Escanea tu QR"
           subtitle="Desde aquí podrás escanear el código QR para así comenzar el viaje"
           Icon={QrIcon}
-          onPress={() => console.log('Escanear QR')}
+          onPress={() => navigation.navigate('ScanQr')}
         />
       </ScrollView>
 
@@ -141,20 +141,20 @@ function MenuCard({ title, subtitle, Icon, onPress }) {
   );
 }
 
-// --- Estilos --- //
+
 const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#E5E5E5' },
 
-  // Desplazamos todo hacia abajo sumando el alto del status bar + margen extra
+
   scroll: {
     paddingHorizontal: 20,
-    paddingTop: STATUS_BAR_HEIGHT + 40, // 👈 ajusta este valor si lo quieres aún más bajo
+    paddingTop: STATUS_BAR_HEIGHT + 40, 
     paddingBottom: 120,
   },
 
-  // Header con un margen inferior más amplio
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   ratingText: { fontSize: 14, fontWeight: '600' },
   avatarBtn: { backgroundColor: '#FFF', padding: 6, borderRadius: 30 },
 
-  // Acciones rápidas – cajas más compactas y sin clipping
+  // Acciones rápidas
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -188,11 +188,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 24,
-    overflow: 'visible', // ⬅ evita que el borde recorte los SVG
+    overflow: 'visible', 
   },
   actionText: { marginTop: 6, fontWeight: '600' },
 
-  // Tarjetas menú – sin cambios, salvo margen superior general heredado
+  // Tarjetas menú 
   card: {
     backgroundColor: '#FFF',
     borderRadius: 20,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
   cardSubtitle: { fontSize: 13, color: '#666' },
 
-  // Bottom nav (sin cambios)
+
   bottomNav: {
     position: 'absolute',
     bottom: 0,
