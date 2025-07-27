@@ -14,17 +14,16 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-// --- IMPORTS DE ICONOS (exportaciones nombradas) ---
+
 import { Cuenta as CuentaIcon } from '../components/Icono_cuenta';
 import { Icono_Historial as HistorialIcon } from '../components/Icono_historial';
 import { Inicio as InicioIcon } from '../components/Icono_inicio';
 import { Qr as QrIcon } from '../components/Icono_qr';
-import { Seguridad } from '../components/Icono_seguridad';
 import { Ayuda } from '../components/Icono_ayuda';
 import { Bus } from '../components/Bus';
 import { Ajustes } from '../components/Ajustes';
+import { Carro } from '../components/Icono_Carro';  
 
-// Tamaño estándar para los íconos en acciones rápidas
 const QUICK_ICON_SIZE = 50;
 
 export default function CuentaScreen() {
@@ -66,7 +65,6 @@ export default function CuentaScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Tarjetas de menú */}
         <MenuCard
           title="Quiero Ser Conductor"
           subtitle="Realiza aquí tu solicitud para ser conductor para la institución"
@@ -82,10 +80,10 @@ export default function CuentaScreen() {
         />
 
         <MenuCard
-          title="Control de Seguridad"
-          subtitle="Conoce cómo hacer que los viajes sean más seguros"
-          Icon={Seguridad}
-          onPress={() => console.log('Control de Seguridad')}
+          title="Comenzar Viaje"
+          subtitle="Si eres un conductor, puedes comenzar un viaje desde aquí"
+          Icon={Carro}
+          onPress={() => console.log('Comenzar Viaje')}
         />
 
         <MenuCard
@@ -126,7 +124,7 @@ export default function CuentaScreen() {
   );
 }
 
-// --- Componentes auxiliares --- //
+
 function MenuCard({ title, subtitle, Icon, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -174,7 +172,6 @@ const styles = StyleSheet.create({
   ratingText: { fontSize: 14, fontWeight: '600' },
   avatarBtn: { backgroundColor: '#FFF', padding: 6, borderRadius: 30 },
 
-  // Acciones rápidas
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -192,7 +189,7 @@ const styles = StyleSheet.create({
   },
   actionText: { marginTop: 6, fontWeight: '600' },
 
-  // Tarjetas menú 
+
   card: {
     backgroundColor: '#FFF',
     borderRadius: 20,
