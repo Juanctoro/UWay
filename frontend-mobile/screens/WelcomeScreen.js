@@ -16,7 +16,7 @@ export default function WelcomeScreen({ navigation }) {
         <Text style={styles.btnText}>Iniciar Sesion</Text>
       </Pressable>
 
-      <Pressable onPress={() => alert('Registro pendiente')}>
+      <Pressable onPress={() => navigation.navigate('QuienEres')}>
         <Text style={styles.linkText}>
           ¿No tienes cuenta? <Text style={{ textDecorationLine: 'underline' }}>Regístrate</Text>
         </Text>
