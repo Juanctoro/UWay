@@ -13,12 +13,7 @@ class DriverSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Driver
-        fields = ['user', 'license_number', 'papers', 'is_approved', 'current_location']
-
-class DriverFilesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Driver
-        fields= ['user', 'soat_file', 'driver_license_file', 'transit_license_file']
+        fields = ['user', 'license_number', 'papers', 'is_approved', 'soat_file', 'driver_license_file', 'transit_license_file']
 
 class DriverReviewSerializer(serializers.ModelSerializer):
     driver_id = serializers.CharField(source='reservation.trip.vehicle.driver.user.dni')

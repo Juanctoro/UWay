@@ -15,7 +15,8 @@ class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.select_related('user').all()
     serializer_class = DriverSerializer
     lookup_field = 'user'  # lookup by User DNI
-    permission_classes = [AllowAny]    
+    parser_classes = [MultiPartParser, FormParser]  # Necesario para subir archivos PDF
+    permission_classes = [AllowAny]   
 
     # Viajes hechos por un conductor específico
     @action(detail=True, methods=['get'])
@@ -78,13 +79,6 @@ class DriverViewSet(viewsets.ModelViewSet):
         serializer = DriverAverageRatingsSerializer(ratings, many=True)
         return Response(ratings)
     
-class DriverFilesViewSet(viewsets.ModelViewSet):
-    queryset = Driver.objects.select_related('user').all()
-    serializer_class = DriverFilesSerializer
-    parser_classes = [MultiPartParser, FormParser]  # Necesario para subir archivos PDF
-    lookup_field = 'user'  # lookup by User DNI
-    permission_classes = [AllowAny]   
-
 @api_view(['POST'])
 def update_location(request, driver_id):
     serializer = LocationUpdateSerializer(data=request.data)

@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.db.models import Count
+from django.utils.timezone import localtime
 from .models import User
 from .serializers import *
 from trip.models import Trip
@@ -16,7 +17,41 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'dni'            # usaremos /user/{dni}/
     permission_classes = [permissions.AllowAny]
 
-    # Rervas hechas por un usuario específico
+    @action(detail=True, methods=['get'])
+    def user_reservations_history(self, request, dni=None):
+        user = self.get_object()
+        reservations = Reservation.objects.filter(user_id=dni).select_related('trip__vehicle__driver__user')
+
+        trips = []
+        for res in reservations:
+            trip = res.trip
+            vehicle = trip.vehicle
+            driver = vehicle.driver
+
+            review = getattr(res, 'review', None)
+            rating_given = review.rating if review else None
+
+            trips.append({
+                'id': res.id,
+                'date': localtime(trip.start_time).date(),
+                'time': localtime(trip.start_time).time().strftime("%H:%M"),
+                'origin': 'Lugar A', #Mediante conexión con API
+                'destination': 'Lugar B', #Mediante conexión con API
+                'driver': {
+                    'name': f"{driver.user.names} {driver.user.lastnames}",
+                    'vehicle': f"{vehicle.brand} {vehicle.model} - {vehicle.plate}"
+                },
+                'status': trip.status,
+                'duration_minutes': int(trip.duration),
+                'route_type': "Metropolitano", #Mediante atributo trip.route_type
+                'rating_given': rating_given,
+            })
+
+        return Response({
+            'trips': trips,
+    })
+
+    # Reservas hechas por un usuario específico
     @action(detail=True, methods=['get'])
     def user_reservations(self, request, dni=None):
         user = self.get_object()
@@ -27,11 +62,6 @@ class UserViewSet(viewsets.ModelViewSet):
             'total_reservations': total
             })
 
-    @action(detail=True, methods=['get'])
-    def get_user_role(self, request, dni=None):
-        serializer = UserRoleSerializer(User, many=False)
-        return Response ({serializer.data})
-    
     # Reservas hechas por cada usuario
     @action(detail=False, methods=['get'])
     def total_reservations(self, request):
