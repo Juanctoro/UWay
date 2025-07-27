@@ -7,23 +7,75 @@ import {
     TextInput,
     StyleSheet,
     KeyboardAvoidingView,
-    Platform,
+    Platform, TouchableOpacity, Alert,
 } from 'react-native';
 import RoundedButton from '../components/RoundedButton';
+import * as DocumentPicker from 'expo-document-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function registerInstitucion({ navigation }) {
     const [name, setname] = useState('');
     const [direccion, setdireccion] = useState('');
-    const [logo, setlogo] = useState('');
-    const [color, setcolor] = useState('');
-    const [rut, setrut] = useState('');
+    const [LogoFile, setLogoFile] = useState('');
+    const [colorFile, setcolorFile] = useState('');
+    const [rutFile, setrutFile] = useState('');
 
     const handleChange = () => {
         if (pwd1.length < 8) return alert('La contraseña debe tener 8 caracteres o más');
         if (pwd1 !== pwd2) return alert('Las contraseñas no coinciden');
         alert('Contraseña cambiada');
         navigation.navigate('Login');
+    };
+
+    const handleSelectLogo = async () => {
+        console.log('📁 Abrir picker Logo');
+        try {
+            const res = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf',
+                copyToCacheDirectory: false,
+            });
+            console.log('📁 Resultado Logo:', res);
+            if (res.type === 'success') {
+                setLogoFile(res);
+            }
+        } catch (err) {
+            console.error('🔴 Error Logo:', err);
+            Alert.alert('Error', 'No se pudo seleccionar el logo.');
+        }
+    };
+
+    const handleSelectcolor = async () => {
+        console.log('📁 Abrir picker color');
+        try {
+            const res = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf',
+                copyToCacheDirectory: false,
+            });
+            console.log('📁 Resultado color:', res);
+            if (res.type === 'success') {
+                setcolorFile(res);
+            }
+        } catch (err) {
+            console.error('🔴 Error color:', err);
+            Alert.alert('Error', 'No se pudo seleccionar el color.');
+        }
+    };
+
+    const handleSelectrut = async () => {
+        console.log('📁 Abrir picker rut');
+        try {
+            const res = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf',
+                copyToCacheDirectory: false,
+            });
+            console.log('📁 Resultado rut:', res);
+            if (res.type === 'success') {
+                setrutFile(res);
+            }
+        } catch (err) {
+            console.error('🔴 Error rut:', err);
+            Alert.alert('Error', 'No se pudo seleccionar el rut.');
+        }
     };
 
     return (
@@ -60,34 +112,25 @@ export default function registerInstitucion({ navigation }) {
                         />
 
                         <Text style={styles.label}>Logo</Text>
-                        <TextInput
-                            placeholder="PlaceHolder"
-                            placeholderTextColor="#aaa"
-                            style={styles.input}
-                            secureTextEntry
-                            value={logo}
-                            onChangeText={setlogo}
-                        />
+                        <TouchableOpacity style={styles.uploadBox} onPress={handleSelectLogo}>
+                            <Text style={{ color: LogoFile ? '#000' : '#aaa' }}>
+                                {LogoFile ? LogoFile.name : 'Selecciona un archivo PDF'}
+                            </Text>
+                        </TouchableOpacity>
 
                         <Text style={styles.label}>Paleta de colores</Text>
-                        <TextInput
-                            placeholder="PlaceHolder"
-                            placeholderTextColor="#aaa"
-                            style={styles.input}
-                            secureTextEntry
-                            value={color}
-                            onChangeText={setcolor}
-                        />
+                        <TouchableOpacity style={styles.uploadBox} onPress={handleSelectcolor}>
+                            <Text style={{ color: colorFile ? '#000' : '#aaa' }}>
+                                {colorFile ? colorFile.name : 'Selecciona un archivo PDF'}
+                            </Text>
+                        </TouchableOpacity>
 
                         <Text style={styles.label}>Registro Unico Tributario (RUT)</Text>
-                        <TextInput
-                            placeholder="PlaceHolder"
-                            placeholderTextColor="#aaa"
-                            style={styles.input}
-                            secureTextEntry
-                            value={rut}
-                            onChangeText={setrut}
-                        />
+                        <TouchableOpacity style={styles.uploadBox} onPress={handleSelectrut}>
+                            <Text style={{ color: rutFile ? '#000' : '#aaa' }}>
+                                {rutFile ? rutFile.name : 'Selecciona un archivo PDF'}
+                            </Text>
+                        </TouchableOpacity>
 
                         <RoundedButton title="Siguiente" onPress={() => navigation.navigate('Institucion2')} />
                     </View>
@@ -123,6 +166,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         marginBottom: 10,
     },
-    logo: { width: 90, height: 32 },
+    uploadBox: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        justifyContent: 'center',
+    },
     version: { alignSelf: 'center', color: '#666', marginBottom: 8 },
 });

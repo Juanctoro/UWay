@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function registerInstitucion({ navigation }) {
     const [correo, setcorreo] = useState('');
-    const [numero, setnumero] = useState('');
+    const [celular, setCelular] = useState('');
     const [pwd1, setPwd1] = useState('');
     const [pwd2, setPwd2] = useState('');
 
@@ -48,14 +48,14 @@ export default function registerInstitucion({ navigation }) {
                         />
 
 
-                        <Text style={styles.label}>Numero celular</Text>
+                        <Text style={styles.label}>Número de celular</Text>
                         <TextInput
-                            placeholder="PlaceHolder"
+                            placeholder="Ej. 3001234567"
                             placeholderTextColor="#aaa"
                             style={styles.input}
-                            secureTextEntry
-                            value={numero}
-                            onChangeText={setnumero}
+                            keyboardType="numeric"
+                            value={celular}
+                            onChangeText={text => setCelular(text.replace(/[^0-9]/g, ''))}
                         />
 
                         <Text style={styles.label}>Asigne una contraseña</Text>

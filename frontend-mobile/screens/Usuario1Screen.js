@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-    Image,
     ImageBackground,
     View,
     Text,
@@ -9,22 +8,29 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import RoundedButton from '../components/RoundedButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function registerUserScreen({ navigation }) {
-    const [ins, setInstitucion] = useState('');
-    const [name, setname] = useState('');
-    const [apellido, setapellido] = useState('');
-    const [correo, setCorreo] = useState('');
-    const [Code, setCode] = useState('');
+export default function RegisterUserScreen({ navigation }) {
+    // Estados para dropdown
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+        { label: 'Universidad Nacional', value: 'u1' },
+        { label: 'Univer. de Los Andes', value: 'u2' },
+        { label: 'Pontificia Javeriana', value: 'u3' },
+        { label: 'Universidad del Valle', value: 'u4' },
+        // añade más…
+    ]);
 
-    const handleChange = () => {
-        if (pwd1.length < 8) return alert('La contraseña debe tener 8 caracteres o más');
-        if (pwd1 !== pwd2) return alert('Las contraseñas no coinciden');
-        alert('Contraseña cambiada');
-        navigation.navigate('Login');
-    };
+    const [name, setName] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [code, setCode] = useState('');
+
+    // Para que el dropdown renderice bien sobre teclado
+    const zIndexValue = Platform.OS === 'android' ? undefined : 5000;
 
     return (
         <ImageBackground source={require('../assets/fondo.jpg')} style={styles.bg}>
@@ -38,25 +44,31 @@ export default function registerUserScreen({ navigation }) {
                             <Text style={styles.title}>Registro</Text>
                         </View>
 
-                        <Text style={styles.label}>Selecciona la institucion a la cual te vas a registrar</Text>
-                        <TextInput
-                            placeholder="PlaceHolder"
-                            placeholderTextColor="#aaa"
-                            style={styles.input}
-                            secureTextEntry
-                            value={ins}
-                            onChangeText={setInstitucion}
-                        />
+                        <Text style={styles.label}>
+                            Selecciona la institución a la cual te vas a registrar
+                        </Text>
 
+                        <View style={[styles.dropdownContainer, { zIndex: zIndexValue }]}>
+                            <DropDownPicker
+                                open={open}
+                                value={value}
+                                items={items}
+                                setOpen={setOpen}
+                                setValue={setValue}
+                                setItems={setItems}
+                                placeholder="-- Selecciona institución --"
+                                style={styles.dropdown}
+                                dropDownContainerStyle={styles.dropDownContainer}
+                            />
+                        </View>
 
                         <Text style={styles.label}>Nombre</Text>
                         <TextInput
                             placeholder="PlaceHolder"
                             placeholderTextColor="#aaa"
                             style={styles.input}
-                            secureTextEntry
                             value={name}
-                            onChangeText={setname}
+                            onChangeText={setName}
                         />
 
                         <Text style={styles.label}>Apellidos</Text>
@@ -64,35 +76,36 @@ export default function registerUserScreen({ navigation }) {
                             placeholder="PlaceHolder"
                             placeholderTextColor="#aaa"
                             style={styles.input}
-                            secureTextEntry
                             value={apellido}
-                            onChangeText={setapellido}
+                            onChangeText={setApellido}
                         />
 
-                        <Text style={styles.label}>Correo Electronico Institucional (Opcional)</Text>
+                        <Text style={styles.label}>
+                            Correo Electrónico Institucional (Opcional)
+                        </Text>
                         <TextInput
                             placeholder="PlaceHolder"
                             placeholderTextColor="#aaa"
                             style={styles.input}
-                            secureTextEntry
                             value={correo}
                             onChangeText={setCorreo}
                         />
 
-                        <Text style={styles.label}>Codigo de estudiante (Opcional)</Text>
+                        <Text style={styles.label}>Código de estudiante (Opcional)</Text>
                         <TextInput
                             placeholder="PlaceHolder"
                             placeholderTextColor="#aaa"
                             style={styles.input}
-                            secureTextEntry
-                            value={Code}
+                            value={code}
                             onChangeText={setCode}
                         />
 
-                        <RoundedButton title="Siguiente" onPress={() => navigation.navigate('Usuario2')} />
+                        <RoundedButton
+                            title="Siguiente"
+                            onPress={() => navigation.navigate('Usuario2', { institution: value })}
+                        />
                     </View>
                 </KeyboardAvoidingView>
-
                 <Text style={styles.version}>V 1.0.1</Text>
             </SafeAreaView>
         </ImageBackground>
@@ -113,8 +126,18 @@ const styles = StyleSheet.create({
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
     title: { fontSize: 22, fontWeight: '700', marginRight: 6 },
-    label: { fontWeight: '600', marginTop: 4, marginBottom: 6 },
-    hint: { fontSize: 12, color: '#444', marginBottom: 12 },
+    label: { fontWeight: '600', marginTop: 12, marginBottom: 6 },
+
+    dropdownContainer: {
+        marginBottom: 10,
+    },
+    dropdown: {
+        borderColor: '#ddd',
+    },
+    dropDownContainer: {
+        borderColor: '#ddd',
+    },
+
     input: {
         borderWidth: 1,
         borderColor: '#ddd',
@@ -123,6 +146,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         marginBottom: 10,
     },
-    logo: { width: 90, height: 32 },
     version: { alignSelf: 'center', color: '#666', marginBottom: 8 },
 });
