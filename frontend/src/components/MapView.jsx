@@ -18,6 +18,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
 import './styles/UWayDashboard.css';
+import api from '../api/axiosClient';
 
 // Captura clicks para agregar puntos
 function ClickHandler({ onAdd }) {
@@ -80,7 +81,9 @@ export default function MapView({
   role,
   existingRoutes = [],
   onPointsChange,
-  centerToUser
+  centerToUser,
+  onFinishTrip,
+  selectedPoints = []
 }) {
   const isDriver = role === 'driver';
 
@@ -92,8 +95,16 @@ export default function MapView({
 
   // Informar al padre cuando cambian los puntos
   useEffect(() => {
-    onPointsChange?.(points); 
+    onPointsChange?.(points);
   }, [points, onPointsChange]);
+
+  // 2. Escucha desde el padre si lo limpian (para borrar del mapa también)
+  useEffect(() => {
+    if (selectedPoints.length === 0 && points.length !== 0) {
+      setPoints([]);
+    }
+  }, [selectedPoints]);
+
 
   // Recentra a la ubicación del usuario cuando se active
   useEffect(() => {
@@ -236,7 +247,7 @@ export default function MapView({
           </Marker>
         )}
 
-        {isDriver && <ClickHandler onAdd={addPoint} />}
+        {isDriver && existingRoutes.length === 0 && <ClickHandler onAdd={addPoint} />}
 
         {points.map((p, i) => (
           <Marker key={i} position={[p.lat, p.lng]} icon={getCircleIcon()}>
@@ -261,11 +272,21 @@ export default function MapView({
 
         {isDriver && points.length >= 2 && <RoutingControl points={points} />}
 
-        {!isDriver &&
-          existingRoutes.map((route, i) => (
-            <Polyline key={i} positions={route.points} />
-          ))}
+        {existingRoutes.map((route, i) => (
+          <Polyline key={i} positions={route} pathOptions={{ color: '#7e22ce', weight: 5 }} />
+        ))}
       </MapContainer>
+
+      {existingRoutes.length > 0 && (
+        <div>
+          <button
+            className="finish-trip-button"
+            onClick={onFinishTrip}
+          >
+            Finalizar viaje
+          </button>
+        </div>
+      )}
 
       {isDriver && (
         <div className="points-list">

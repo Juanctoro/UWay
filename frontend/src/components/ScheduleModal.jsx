@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './styles/UWayScheduleModal.css';
-import api from '../api/axiosClient'; // Ajusta si tu ruta es distinta
+import api from '../api/axiosClient'; 
 
 export default function ScheduleModal({
   isOpen,
@@ -13,7 +13,6 @@ export default function ScheduleModal({
 }) {
   const [vehicles, setVehicles] = useState([]);
 
-  // Cargar vehículos del usuario al abrir el modal
   useEffect(() => {
     if (!isOpen) return;
 

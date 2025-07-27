@@ -132,7 +132,7 @@ class TripViewSet(viewsets.ModelViewSet):
         trip = self.get_object()
         user = request.user
 
-        if trip.vehicle.driver != user:
+        if trip.vehicle.driver.user != user:
             return Response({"detail": "No autorizado para iniciar este viaje."}, status=403)
 
         if trip.status != 'scheduled':
@@ -141,3 +141,31 @@ class TripViewSet(viewsets.ModelViewSet):
         trip.status = 'in_progress'
         trip.save()
         return Response({"detail": "Viaje iniciado exitosamente."})
+    
+    @action(detail=False, methods=['get'], url_path='current', permission_classes=[IsAuthenticated])
+    def current_trip(self, request):
+        """
+        Devuelve el viaje en progreso del conductor actual, si existe.
+        """
+        user = request.user
+        trip = Trip.objects.filter(vehicle__driver__user=user, status='in_progress').first()
+        if not trip:
+            return Response({'detail': 'No tienes ningún viaje en progreso'}, status=404)
+
+        serializer = TripSerializer(trip)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='finish', permission_classes=[IsAuthenticated])
+    def finish_trip(self, request):
+        """
+        Finaliza el viaje en progreso del conductor actual, si existe.
+        """
+        user = request.user
+        trip = Trip.objects.filter(vehicle__driver__user=user, status='in_progress').first()
+        if not trip:
+            return Response({'detail': 'No tienes ningún viaje en progreso'}, status=404)
+
+        trip.status = 'finished'
+        trip.save()
+        return Response({'detail': 'Viaje finalizado correctamente.'})
+    

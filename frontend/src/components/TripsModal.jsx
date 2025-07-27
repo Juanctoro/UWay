@@ -1,12 +1,12 @@
 import React from 'react';
 import './styles/TripsModal.css'; // Asegúrate de crear este archivo
 
-export default function TripsModal({ isOpen, onClose, trips, onStartTrip }) {
+export default function TripsModal({ isOpen, onClose, trips, onStartTrip, onCancelTrip }) {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
-      <div className="modal-box">
+      <div className="modal-box-trips">
         <div className="modal-header">
           <h5 className="modal-title">Mis viajes programados</h5>
         </div>
@@ -29,6 +29,12 @@ export default function TripsModal({ isOpen, onClose, trips, onStartTrip }) {
                     className="modal-btn confirm"
                   >
                     Iniciar viaje
+                  </button>
+                  <button
+                    onClick={() => onCancelTrip(trip)}
+                    className="modal-btn confirm"
+                  >
+                    Cancelar viaje
                   </button>
                 </li>
               ))}

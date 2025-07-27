@@ -18,6 +18,7 @@ import ScheduleModal from './ScheduleModal';
 import TripsModal from './TripsModal'; 
 import api from '../api/axiosClient';
 const token = localStorage.getItem('token');
+import { toast } from 'react-toastify';
 
 export default function Dashboard() {
   const [showTripsModal, setShowTripsModal] = useState(false);
@@ -28,12 +29,23 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Estado para contar puntos y disparar recentrado
   const [selectedPoints, setSelectedPoints] = useState([]);
   const [centerUserFlag, setCenterUserFlag] = useState(false);
 
   const [trips, setTrips] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState('');
+
+  const [currentTrip, setCurrentTrip] = useState(null);
+
+  const parseRoute = (routeStr) => {
+    const matches = routeStr.match(/\(\(([^)]+)\)\)/);
+    if (!matches) return [];
+    return matches[1].split(',').map(pair => {
+      const [lon, lat] = pair.trim().split(' ').map(Number);
+      return [lat, lon];  // Leaflet usa [lat, lon]
+    });
+  };
+
 
   useEffect(() => {
     if (showTripsModal) {
@@ -52,13 +64,103 @@ export default function Dashboard() {
   }, [showTripsModal]);
 
   const handleStartTrip = (trip) => {
-    // Aquí podrías marcarlo como "en curso", enviar a backend, etc.
+    api.get('/trips/current/', {
+      headers: { Authorization: `Token ${token}` }
+    })
+    .then(res => {
+      if (res.data && res.data.status === 'in_progress') {
+        toast.error('Ya tienes un viaje en curso. Debes finalizarlo antes de iniciar otro.');
+        return;
+      }
+
+      api.post(`/trips/${trip.id}/start/`, {}, {
+        headers: { Authorization: `Token ${token}` }
+      })
+      .then(res => {
+        setShowTripsModal(false);
+        
+        api.get('/trips/current/', {
+          headers: { Authorization: `Token ${token}` }
+        })
+        .then(res => {
+          setCurrentTrip(res.data);
+          toast.success('Viaje iniciado correctamente');
+        })
+        .catch(err => {
+          setCurrentTrip(null);
+        });
+      })
+      .catch(err => {
+        toast.error('No se pudo iniciar el viaje.');
+      });
+    })
+    .catch(err => {
+      if (err.response && err.response.status === 404) {
+        api.post(`/trips/${trip.id}/start/`, {}, {
+          headers: { Authorization: `Token ${token}` }
+        })
+        .then(res => {
+          setShowTripsModal(false);
+          api.get('/trips/current/', {
+            headers: { Authorization: `Token ${token}` }
+          })
+          .then(res => {
+            setCurrentTrip(res.data);
+          })
+          .catch(err => {
+            console.warn('No hay viaje en progreso');
+            setCurrentTrip(null);
+          });
+        })
+        .catch(err => {
+          console.error('Error al iniciar el viaje', err);
+          toast.error('No se pudo iniciar el viaje.');
+        });
+      } else {
+        toast.error('No se pudo verificar si ya tienes un viaje activo.');
+      }
+    });
+  };
+
+  const handleCancelTrip = (trip) => {
+    console.error('Cancelando viaje:', trip);
+    api.delete(`/trips/${trip.id}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(() => {
+        toast.success('Viaje cancelado correctamente');
+        setTrips(trips.filter(t => t.id !== trip.id));
+      })
+      .catch(err => {
+        console.error('Error al cancelar el viaje', err);
+        toast.error('No se pudo cancelar el viaje.');
+      });
     setShowTripsModal(false);
+  };
+
+  const handleFinishTrip = () => {
+    api.get(`/trips/finish/`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(() => {
+      toast.success('Viaje finalizado correctamente');
+      setTrips(null);
+      setCurrentTrip(null);
+      setSelectedPoints([]);
+    })
+    .catch(err => {
+      console.error('Error al finalizar el viaje', err);
+      toast.error('No se pudo finalizar el viaje.');
+    });
   };
 
   const handleCreateTrip = async () => {
     if (selectedPoints.length < 2 || !scheduledTime) {
-      alert('Selecciona al menos 2 puntos y una hora válida');
+      toast.warning('Selecciona al menos 2 puntos y una hora válida');
       return;
     }
 
@@ -86,14 +188,12 @@ export default function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      alert('Viaje programado correctamente');
+      toast.success('Viaje programado correctamente');
       setShowScheduleModal(false);
       setSelectedPoints([]);
     } catch (err) {
-        console.error('Error al programar el viaje', err);
-        console.log('Respuesta del backend:', err.response?.data);
-        alert('No se pudo programar el viaje.');
-      };
+      toast.error('No se pudo programar el viaje.');
+    }
   };
 
   // Menú secundario (solo con al menos 2 puntos aparece 'Programar viaje')
@@ -110,6 +210,31 @@ export default function Dashboard() {
       label: 'Mis viajes',
       icon: FaRoute,
       onClick: () => setShowTripsModal(true)
+    });
+    secondaryMenu.push({
+      label: 'Viaje en progreso',
+      icon: FaRoute,
+      onClick: async () => {
+        try {
+          const res = await api.get('/trips/current/', {
+            headers: {
+              Authorization: `Token ${token}`
+            }
+          });
+
+          if (!res.data || !res.data.route) {
+            toast.error('No tienes un viaje activo actualmente.');
+            setCurrentTrip(null);
+            return;
+          }
+
+          setCurrentTrip(res.data);
+        } catch (err) {
+          console.warn('No hay viaje en progreso', err);
+          toast.error('No tienes ningún viaje activo actualmente.');
+          setCurrentTrip(null);
+        }
+      }
     });
   } else if (user?.roles?.includes('admin')) {
     secondaryMenu.push({
@@ -160,9 +285,11 @@ export default function Dashboard() {
 
         <MapView
           role={user?.roles?.includes('driver') ? 'driver' : 'user'}
-          existingRoutes={[]}
+          existingRoutes={currentTrip?.route ? [parseRoute(currentTrip.route)] : []}
           onPointsChange={setSelectedPoints}
+          selectedPoints={selectedPoints}
           centerToUser={centerUserFlag}
+          onFinishTrip={handleFinishTrip}
         />
       </main>
       <ScheduleModal
@@ -180,8 +307,9 @@ export default function Dashboard() {
       <TripsModal
         isOpen={showTripsModal}
         onClose={() => setShowTripsModal(false)}
-        trips={trips}
+        trips={trips || []}
         onStartTrip={handleStartTrip}
+        onCancelTrip={handleCancelTrip}
       />
     </div>
   );
