@@ -71,7 +71,7 @@ export default function CuentaScreen() {
           title="Quiero Ser Conductor"
           subtitle="Realiza aquí tu solicitud para ser conductor para la institución"
           Icon={Bus}
-          onPress={() => console.log('Quiero ser conductor')}
+          onPress={() => navigation.navigate('ConductorRegistro')}
         />
 
         <MenuCard

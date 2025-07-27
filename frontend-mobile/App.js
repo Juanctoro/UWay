@@ -21,6 +21,7 @@ import Usuario2Screen from './screens/Usuario2Screen';
 import Institucion1Screen from './screens/Institucion1Screen';
 import Institucion2Screen from './screens/Institucion2Screen';
 import AsignacionContrasenaScreen from './screens/AsignacionContrasenaScreen';
+import ConductorRegistroScreen from './screens/ConductorRegistroScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,6 +48,7 @@ export default function App() {
         <Stack.Screen name="Institucion1" component={Institucion1Screen} />
         <Stack.Screen name="Institucion2" component={Institucion2Screen} />
         <Stack.Screen name="AsignacionContraseña" component={AsignacionContrasenaScreen} />
+        <Stack.Screen name="ConductorRegistro" component={ConductorRegistroScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
