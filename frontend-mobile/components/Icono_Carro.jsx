@@ -3,8 +3,9 @@ import Svg, { Path } from "react-native-svg"
 export const Carro = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={25}
-    height={24}
+    width={20}
+    height={20}
+    viewBox="-6 0 32 20"
     fill="none"
     {...props}
   >
