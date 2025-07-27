@@ -1,5 +1,4 @@
-// screens/CuentaScreen.js
-// Pantalla "Cuenta" – espaciados y tamaños de iconos ajustados
+
 
 import React from 'react';
 import {
@@ -83,7 +82,7 @@ export default function CuentaScreen() {
           title="Comenzar Viaje"
           subtitle="Si eres un conductor, puedes comenzar un viaje desde aquí"
           Icon={Carro}
-          onPress={() => console.log('Comenzar Viaje')}
+          onPress={() => navigation.navigate('RealizarViaje')}
         />
 
         <MenuCard
