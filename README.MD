@@ -87,6 +87,6 @@ Este repositorio contiene la aplicación **UWay**, compuesta por un backend en D
    ```
 4. Ejecutar:
  ```
-  mpx expo start
+  npx expo start
    ```
 
