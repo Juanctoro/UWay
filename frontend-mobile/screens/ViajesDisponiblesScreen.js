@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -10,35 +10,100 @@ import {
   Platform,
   StatusBar,
   FlatList,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { Lupa } from '../components/Lupa';
 import { Ubicacion } from '../components/Icono_ubicacion';
 import { Inicio as InicioIcon } from '../components/Icono_inicio';
 import { Icono_Historial as HistorialIcon } from '../components/Icono_historial';
 import { Cuenta as CuentaIcon } from '../components/Icono_cuenta';
 import CarInfoCard2 from '../components/CarInfoCard2';
+import { obtenerViajes } from '../services/tripService';
+import vehicleService from '../services/vehicleService';
+
+const API_DRIVERS = 'http://192.168.1.5:8000/drivers/';
 
 export default function ViajesDisponiblesScreen() {
   const navigation = useNavigation();
+  const [viajes, setViajes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const cargarViajes = async () => {
+      setLoading(true);
+      try {
+        const token = await AsyncStorage.getItem('token'); // <-- Token del usuario
+        const viajesData = await obtenerViajes();
 
-  const [viajes] = useState([
-    { id: '1', origen: 'Cra 34 #56-07', fecha: '25 de jun - 7:19 p.m.' },
-    { id: '2', origen: 'Cra 34 #56-07', fecha: '25 de jun - 7:19 p.m.' },
-    { id: '3', origen: 'Cra 34 #56-07', fecha: '25 de jun - 7:19 p.m.' },
-    { id: '4', origen: 'Cra 34 #56-07', fecha: '25 de jun - 7:19 p.m.' },
-  ]);
+        // Trae los vehículos asociados en paralelo
+        const viajesCompletos = await Promise.all(
+          viajesData.map(async (viaje) => {
+            let vehiculo = null;
+            try {
+              if (viaje.vehicle) {
+                vehiculo = await vehicleService.getVehicleById(viaje.vehicle, token);
+              }
+            } catch (error) {
+              // Puedes loggear el error si quieres debug
+            }
+            return { ...viaje, vehiculo };
+          })
+        );
+        // <-- Aquí el console.log que necesitas
+        console.log('Viajes completos:', JSON.stringify(viajesCompletos, null, 2));
+        setViajes(viajesCompletos);
+      } catch (error) {
+        Alert.alert('Error', 'No se pudieron cargar los viajes.');
+      }
+      setLoading(false);
+    };
+    cargarViajes();
+  }, []);
 
-  const renderItem = ({ item }) => (
-    <CarInfoCard2
-      place={item.origen}
-      dateTime={item.fecha}
-      onPress={() => console.log('Agendar', item.id)}
-      btnLabel="Agendar"
-    />
-  );
+  if (loading) return <ActivityIndicator style={{ marginTop: 60 }} />;
+
+  // Aquí está renderItem
+  const renderItem = ({ item }) => {
+    const startLat = item.start_point?.coordinates?.[1];
+    const startLon = item.start_point?.coordinates?.[0];
+    const endLat = item.end_point?.coordinates?.[1];
+    const endLon = item.end_point?.coordinates?.[0];
+
+    const vehiculo = item.vehiculo || {};
+    const placa = vehiculo.plate || vehiculo.license_plate || 'Desconocida';
+    const modelo = vehiculo.model || 'Modelo desconocido';
+    const color = vehiculo.color || 'Sin color';
+    const conductor = vehiculo.driver || 'Sin conductor';
+
+    const lugar = `De: ${startLat?.toFixed(5) ?? '?'} , ${startLon?.toFixed(5) ?? '?'}\nA: ${endLat?.toFixed(5) ?? '?'} , ${endLon?.toFixed(5) ?? '?'}`;
+
+    return (
+      <CarInfoCard2
+        place={lugar}
+        dateTime={item.start_time ? new Date(item.start_time).toLocaleString() : 'Sin fecha'}
+        carModel={modelo}
+        carPlate={placa}
+        carColor={color}
+        driver={conductor}
+        onPress={async () => {
+          let ids = await AsyncStorage.getItem('historialViajes');
+          ids = ids ? JSON.parse(ids) : [];
+          if (!ids.includes(item.id)) {
+            ids.push(item.id);
+            await AsyncStorage.setItem('historialViajes', JSON.stringify(ids));
+          }
+          Alert.alert('Viaje agendado', '¡Tu viaje ha sido guardado en el historial!');
+          navigation.navigate('Historial');
+        }}
+        btnLabel="Agendar"
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,14 +111,14 @@ export default function ViajesDisponiblesScreen() {
         <Text style={styles.title}>Viajes disponibles</Text>
 
         <View style={styles.card}>
-          {/* Campos de búsqueda */}
+          {/* Campos de búsqueda (no funcionales aún) */}
           <View style={styles.inputWrapper}>
             <Lupa width={20} height={20} />
             <TextInput style={styles.input} placeholder="Punto de partida" />
           </View>
           <View style={styles.resultRow}>
             <Ubicacion width={20} height={20} />
-            <Text style={styles.resultTxt}>Placeholder</Text>
+            <Text style={styles.resultTxt}>Ej: Calle 5 #12-34</Text>
           </View>
 
           <View style={[styles.inputWrapper, { marginTop: 16 }]}>
@@ -62,7 +127,7 @@ export default function ViajesDisponiblesScreen() {
           </View>
           <View style={styles.resultRow}>
             <Ubicacion width={20} height={20} />
-            <Text style={styles.resultTxt}>Cra 34 # 36 08</Text>
+            <Text style={styles.resultTxt}>Ej: Cra 34 #36-08</Text>
           </View>
         </View>
 
@@ -70,7 +135,7 @@ export default function ViajesDisponiblesScreen() {
         <View style={styles.card}>
           <FlatList
             data={viajes}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => String(item.id)}
             renderItem={renderItem}
             scrollEnabled={false}
           />
@@ -150,7 +215,6 @@ const styles = StyleSheet.create({
   },
   confirmTxt: { color: '#FFF', fontWeight: '700' },
 
-  /* bottom nav */
   bottomNav: {
     position: 'absolute',
     bottom: 0,

@@ -30,3 +30,14 @@ export async function crearViaje({
     throw err.response?.data || err.message;
   }
 }
+
+export async function obtenerViajes() {
+  try {
+    const res = await axios.get(API_URL, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.data; // debe ser un array de viajes
+  } catch (err) {
+    throw err.response?.data || err.message;
+  }
+}
