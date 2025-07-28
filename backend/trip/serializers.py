@@ -25,7 +25,6 @@ class TripSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         waypoints = validated_data.pop('waypoints', [])
-
         # Preparar coordenadas para OSRM: asume waypoints incluye inicio y fin
         const_coords = [f"{lon},{lat}" for lon, lat in waypoints]
         coords_str = ";".join(const_coords)

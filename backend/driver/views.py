@@ -28,6 +28,7 @@ class DriverViewSet(viewsets.ModelViewSet):
             'total_trips': total
             })
     
+<<<<<<< HEAD
     # Obtener promedio de rating de un conductor
     @action(detail=True, methods=['get'])
     def driver_rating(self, request, user=None):
@@ -40,6 +41,8 @@ class DriverViewSet(viewsets.ModelViewSet):
             'average_rating': average_rating
         })
 
+=======
+>>>>>>> vn
     # Viajes hechos por cada conductor
     @action(detail=False, methods=['get'])
     def total_trips(self, request):
@@ -52,7 +55,11 @@ class DriverViewSet(viewsets.ModelViewSet):
     
     # Calificaciones y comentarios de cada conductor
     @action(detail=False, methods=['get'])
+<<<<<<< HEAD
     def ratings_and_reviews(self, request):
+=======
+    def rating_reviews(self, request):
+>>>>>>> vn
         reviews = Review.objects.select_related(
             'reservation__trip__vehicle__driver__user',
             'reservation__user'
@@ -60,7 +67,11 @@ class DriverViewSet(viewsets.ModelViewSet):
 
         serializer = DriverReviewSerializer(reviews, many=True)
         return Response(serializer.data)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> vn
     # Obtener promedio de rating de todos los conductores
     @action(detail=False, methods=['get'])
     def average_ratings(self, request):

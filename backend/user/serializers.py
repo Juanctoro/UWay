@@ -34,6 +34,14 @@ class UserSerializer(serializers.ModelSerializer):
             roles.append("driver")
         if admin_obj and admin_obj.is_active:
             roles.append("admin")
+        if Student.objects.filter(user=obj).exists():
+            roles.append("student")
+        if Teacher.objects.filter(user=obj).exists():
+            roles.append("teacher")
+        if Driver.objects.filter(user=obj).exists():
+            roles.append("driver")
+        if Admin_User.objects.filter(user=obj).exists():
+            roles.append("admin")
         return roles
 
     def create(self, validated_data):

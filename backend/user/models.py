@@ -21,7 +21,8 @@ class User(AbstractUser):
                            )
 
     USERNAME_FIELD = 'dni'
-    REQUIRED_FIELDS = ['username', 'email', 'nombres', 'apellidos']
+
+    REQUIRED_FIELDS = ['username', 'email', 'names', 'lastnames']
 
     def __str__(self):
         return f"{self.dni} – {self.names} {self.lastnames}"

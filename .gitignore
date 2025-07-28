@@ -1,3 +1,4 @@
 backend/env/
 backend/UWay/files/qr_codes/
 backend/UWay/files/driver_files/
+node_modules/

@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from django.db.models import Count, Func, CharField
 from django.db.models.functions import TruncTime
 from .models import Reservation
@@ -27,7 +28,6 @@ class ReservationViewSet(viewsets.ModelViewSet):
             )
         
         return Response(reservations)
-    
     
     @action(detail=False, methods=['post'], url_path='create-from-map')
     def create_from_map(self, request):
@@ -85,7 +85,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(reservations, many=True)
         return Response(serializer.data)
-    
+
 # Esta clase personalizada permite extraer unicamente horas y minutos del TIMESTAMP
 class TruncHourMinute(Func):
     function = 'TO_CHAR'

@@ -2,12 +2,14 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from django.db.models import Count
 from statistics import mean
 from trip.models import Trip
 from .models import Vehicle
 from .serializers import *
 from driver.models import Driver
+
 
 class VehicleViewSet(viewsets.ModelViewSet):
     queryset = Vehicle.objects.select_related('driver').all()

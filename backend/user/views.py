@@ -9,7 +9,10 @@ from .models import User
 from .serializers import *
 from trip.models import Trip
 from reservation.models import Reservation
+<<<<<<< HEAD
 from rest_framework.permissions import IsAuthenticated
+=======
+>>>>>>> vn
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -27,6 +30,14 @@ class UserViewSet(viewsets.ModelViewSet):
             'user_dni': user.dni,
             'total_reservations': total
             })
+<<<<<<< HEAD
+=======
+
+    @action(detail=True, methods=['get'])
+    def get_user_role(self, request, dni=None):
+        serializer = UserRoleSerializer(User, many=False)
+        return Response ({serializer.data})
+>>>>>>> vn
     
     # Reservas hechas por cada usuario
     @action(detail=False, methods=['get'])
@@ -58,8 +69,12 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             {'token': token.key, 'user': UserSerializer(user).data},
             status=status.HTTP_200_OK
+<<<<<<< HEAD
         )
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
         return Response(self.get_serializer(request.user).data)
+=======
+        )
+>>>>>>> vn
