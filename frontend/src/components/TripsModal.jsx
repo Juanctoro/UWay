@@ -20,8 +20,16 @@ export default function TripsModal({ isOpen, onClose, trips, onStartTrip, onCanc
                 <li key={idx} className="trip-item">
                   <div>
                     <div>
-                        <strong>Salida:</strong> {trip.start_time?.slice(11, 16)}<br />
-                        <strong>Fecha:</strong> {trip.start_time?.slice(0, 10)}
+                      <strong>Salida:</strong>{" "}
+                      {new Date(trip.start_time).toLocaleTimeString('es-CO', {
+                        timeZone: 'America/Bogota',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}<br />
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(trip.start_time).toLocaleDateString('es-CO', {
+                        timeZone: 'America/Bogota'
+                      })}
                     </div>
                   </div>
                   <button

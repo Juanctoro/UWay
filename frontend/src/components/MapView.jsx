@@ -19,18 +19,29 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
 import './styles/UWayDashboard.css';
 import api from '../api/axiosClient';
+import NearbyTripsModal from './NearbyTripsModal';
 
-// Captura clicks para agregar puntos
-function ClickHandler({ onAdd }) {
-  useMapEvents({
-    click(e) {
-      onAdd({ lat: e.latlng.lat, lng: e.latlng.lng });
-    }
-  });
-  return null;
-}
+  function ClickHandler({ role, onClickPoint }) {
+    useMapEvents({
+      click: async (e) => {
+        const latlng = { lat: e.latlng.lat, lng: e.latlng.lng };
 
-// Mueve el control de zoom a la esquina superior derecha
+        if (role === 'driver') {
+          onClickPoint(latlng);
+        } else {
+          try {
+            const res = await api.get(`/trips/nearby-trips/?lat=${latlng.lat}&lon=${latlng.lng}`);
+            onClickPoint(latlng, res.data); // enviar punto + rutas cercanas
+          } catch (err) {
+            console.error('Error buscando rutas cercanas desde el clic:', err);
+          }
+        }
+      }
+    });
+
+    return null;
+  }
+
 function ZoomControlTopRight() {
   const map = useMap();
   useEffect(() => {
@@ -41,7 +52,6 @@ function ZoomControlTopRight() {
   return null;
 }
 
-// Dibuja la ruta cuando hay al menos dos puntos
 function RoutingControl({ points }) {
   const map = useMap();
   useEffect(() => {
@@ -58,7 +68,6 @@ function RoutingControl({ points }) {
       draggableWaypoints: false
     }).addTo(map);
 
-    // Oculta los botones extra del control
     document.querySelector('.leaflet-routing-container')?.remove();
     document.querySelector('.leaflet-routing-collapse-btn')?.remove();
 
@@ -67,7 +76,6 @@ function RoutingControl({ points }) {
   return null;
 }
 
-// Recentra cuando cambia center
 function Recenter({ center }) {
   const map = useMap();
   useEffect(() => {
@@ -92,36 +100,45 @@ export default function MapView({
   const [mapCenter, setMapCenter] = useState([4.60971, -74.08175]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [nearbyTrips, setNearbyTrips] = useState([]);
+  const [showNearbyTripsModal, setShowNearbyTripsModal] = useState(false);
 
-  // Informar al padre cuando cambian los puntos
   useEffect(() => {
     onPointsChange?.(points);
   }, [points, onPointsChange]);
 
-  // 2. Escucha desde el padre si lo limpian (para borrar del mapa también)
   useEffect(() => {
     if (selectedPoints.length === 0 && points.length !== 0) {
       setPoints([]);
     }
   }, [selectedPoints]);
 
-
-  // Recentra a la ubicación del usuario cuando se active
   useEffect(() => {
     if (centerToUser && userLocation) {
       setMapCenter([userLocation.lat, userLocation.lng]);
     }
   }, [centerToUser, userLocation]);
 
-  const addPoint = latlng => setPoints(prev => [...prev, latlng]);
+  const addPoint = (latlng, nearby = null) => {
+    if (isDriver) {
+      setPoints(prev => [...prev, latlng]);
+    } else {
+      setPoints([latlng]); // siempre reemplaza el anterior
+      if (nearby) {
+        setNearbyTrips(nearby);
+        setShowNearbyTripsModal(true);
+      }
+    }
+  };
+
   const removePoint = idx => setPoints(prev => prev.filter((_, i) => i !== idx));
 
-  // Iconos personalizados
   const userIcon = new L.Icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
     iconSize: [30, 30],
     iconAnchor: [15, 30]
   });
+
   const getCircleIcon = () =>
     new L.DivIcon({
       html: '<div style="background:#7e22ce;width:16px;height:16px;border-radius:50%;border:2px solid white;"></div>',
@@ -130,7 +147,6 @@ export default function MapView({
       iconAnchor: [10, 10]
     });
 
-  // Búsqueda con Nominatim
   const handleSearch = async e => {
     e.preventDefault();
     if (!searchQuery) return;
@@ -141,11 +157,7 @@ export default function MapView({
         const { lat, lng } = userLocation;
         bboxParams = `&viewbox=${lng - d},${lat + d},${lng + d},${lat - d}&bounded=1`;
       }
-      const url =
-        `/nominatim/search?` +
-        `q=${encodeURIComponent(searchQuery)}` +
-        `&format=json&limit=5` +
-        bboxParams;
+      const url = `/nominatim/search?q=${encodeURIComponent(searchQuery)}&format=json&limit=5` + bboxParams;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -155,18 +167,27 @@ export default function MapView({
     }
   };
 
-  const handleSelectResult = r => {
+  const handleSelectResult = async r => {
     if (r) {
       const lat = parseFloat(r.lat);
       const lng = parseFloat(r.lon);
-      addPoint({ lat, lng });
       setMapCenter([lat, lng]);
+      if (isDriver || points.length === 0) {
+        addPoint({ lat, lng });
+      } else {
+        try {
+          const res = await api.get(`/trips/nearby-trips/?lat=${lat}&lon=${lng}`);
+          setNearbyTrips(res.data);
+          setShowNearbyTripsModal(true);
+        } catch (err) {
+          console.error('Error obteniendo rutas cercanas', err);
+        }
+      }
     }
     setSearchResults([]);
     setSearchQuery('');
   };
 
-  // Obtener geolocalización del usuario
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -182,49 +203,47 @@ export default function MapView({
 
   return (
     <>
-      {isDriver && (
-        <div className="search-bar">
-          <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="search-input"
-              placeholder="Buscar lugar en la ciudad"
-            />
-            <button
-              className="search-button"
-              type="button"
-              onClick={handleSearch}
-            >
-              <FaSearch />
-            </button>
-          </form>
+      <div className="search-bar">
+        <form onSubmit={handleSearch} className="search-form">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="search-input"
+            placeholder={isDriver ? 'Buscar lugar para agregar parada' : 'Buscar lugar en el mapa'}
+          />
+          <button
+            className="search-button"
+            type="button"
+            onClick={handleSearch}
+          >
+            <FaSearch />
+          </button>
+        </form>
 
-          {searchResults.length > 0 && (
-            <div className="search-dropdown">
-              <ul className="search-results-list">
-                {searchResults.map((r, i) => (
-                  <li
-                    key={i}
-                    className="search-result-item"
-                    onClick={() => handleSelectResult(r)}
-                  >
-                    <FaMapMarkerAlt className="result-icon" />
-                    <span className="result-text">{r.display_name}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                className="search-results-close"
-                onClick={() => handleSelectResult(null)}
-              >
-                <FaTimes />
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+        {searchResults.length > 0 && (
+          <div className="search-dropdown">
+            <ul className="search-results-list">
+              {searchResults.map((r, i) => (
+                <li
+                  key={i}
+                  className="search-result-item"
+                  onClick={() => handleSelectResult(r)}
+                >
+                  <FaMapMarkerAlt className="result-icon" />
+                  <span className="result-text">{r.display_name}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="search-results-close"
+              onClick={() => handleSelectResult(null)}
+            >
+              <FaTimes />
+            </button>
+          </div>
+        )}
+      </div>
 
       <MapContainer
         center={mapCenter}
@@ -247,18 +266,12 @@ export default function MapView({
           </Marker>
         )}
 
-        {isDriver && existingRoutes.length === 0 && <ClickHandler onAdd={addPoint} />}
+        {!existingRoutes.length && ( <ClickHandler role={role} onClickPoint={addPoint} />)}
 
         {points.map((p, i) => (
           <Marker key={i} position={[p.lat, p.lng]} icon={getCircleIcon()}>
             <Popup>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                   Punto {i + 1}: {p.lat.toFixed(5)}, {p.lng.toFixed(5)}
                 </span>
@@ -277,12 +290,16 @@ export default function MapView({
         ))}
       </MapContainer>
 
+      {showNearbyTripsModal && !isDriver && (
+        <NearbyTripsModal
+          trips={nearbyTrips}
+          onClose={() => setShowNearbyTripsModal(false)}
+        />
+      )}
+
       {existingRoutes.length > 0 && (
         <div>
-          <button
-            className="finish-trip-button"
-            onClick={onFinishTrip}
-          >
+          <button className="finish-trip-button" onClick={onFinishTrip}>
             Finalizar viaje
           </button>
         </div>

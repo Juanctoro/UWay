@@ -19,8 +19,10 @@ import TripsModal from './TripsModal';
 import api from '../api/axiosClient';
 const token = localStorage.getItem('token');
 import { toast } from 'react-toastify';
+import ReservationsModal from './ReservationsModal';
 
 export default function Dashboard() {
+  const [showReservationsModal, setShowReservationsModal] = useState(false);
   const [showTripsModal, setShowTripsModal] = useState(false);
 
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -242,6 +244,12 @@ export default function Dashboard() {
       icon: FaUniversity,
       path: '/adminPanel'
     });
+  } else {
+    secondaryMenu.push({
+      label: 'Mis reservas',
+      icon: FaRoute,
+      onClick: () => setShowReservationsModal(true)
+    });
   }
 
   const primaryMenu = [
@@ -310,6 +318,10 @@ export default function Dashboard() {
         trips={trips || []}
         onStartTrip={handleStartTrip}
         onCancelTrip={handleCancelTrip}
+      />
+      <ReservationsModal
+        isOpen={showReservationsModal}
+        onClose={() => setShowReservationsModal(false)}
       />
     </div>
   );

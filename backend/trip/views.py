@@ -9,6 +9,7 @@ from utils.qr import generate_qr_url
 from .models import Trip
 from .serializers import *
 from reservation.models import Reservation
+from datetime import date
 
 def haversine(lat1, lon1, lat2, lon2):
     """
@@ -70,11 +71,11 @@ class TripViewSet(viewsets.ModelViewSet):
     def nearby_trips(self, request):
         """
         GET /api/trips/nearby-trips/?lon=<float>&lat=<float>&radius=<int opcional>
-        Devuelve todos los trips que tengan paradas a ≤ radius metros de (lon, lat)
-        y para cada uno incluye la distancia a la parada MÁS CERCANA.
+        Devuelve todos los trips activos (hoy o en adelante) con paradas cerca del punto (lon, lat).
         """
         lon = request.query_params.get('lon')
         lat = request.query_params.get('lat')
+
         try:
             lon, lat = float(lon), float(lat)
         except (TypeError, ValueError):
@@ -82,32 +83,41 @@ class TripViewSet(viewsets.ModelViewSet):
                 {"detail": "Parámetros 'lon' y 'lat' requeridos y válidos."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        radius = float(request.query_params.get('radius', 500))
 
-        # 1) Filtrar trips que tengan start, end o alguna parada a ≤ radius
+        radius = float(request.query_params.get('radius', 500))
+        today = date.today()
+
+        # 1. Obtener todos los viajes cercanos
         trips_qs = Trip.get_nearby(lon, lat, radius)
+
+        # 2. Filtrar los viajes: hoy o futuro Y estado programado o en progreso
+        trips_qs = trips_qs.filter(
+            start_time__date__gte=today,
+            status__in=['scheduled', 'in_progress']  # ajusta según tus valores
+        )
 
         results = []
         for trip in trips_qs:
-            # 2) Obtener sólo las paradas de ese trip dentro del radio
+            # 3. Obtener solo paradas dentro del radio
             stops = trip.nearby_stops(lon, lat, radius)
             if not stops:
                 continue
 
-            # 3) Calcular distancias de cada parada y quedarnos con la mínima
+            # 4. Calcular distancias y encontrar la más cercana
             distancias = [
-                haversine(lat, lon, lat_p, lon_p) 
+                haversine(lat, lon, lat_p, lon_p)
                 for lon_p, lat_p in stops
             ]
             idx = distancias.index(min(distancias))
             nearest = stops[idx]
             min_dist = distancias[idx]
 
-            # 4) Armar el dict de salida
+            # 5. Preparar salida
             results.append({
                 "trip_id": trip.id,
                 "vehicle_plate": trip.vehicle.plate,
                 "nearest_stop_distance_m": min_dist,
+                "route": trip.route.wkt if trip.route else None,
                 "nearest_stop": {
                     "longitude": nearest[0],
                     "latitude":  nearest[1]
