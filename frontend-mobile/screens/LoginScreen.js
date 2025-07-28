@@ -12,10 +12,24 @@ import {
 } from 'react-native';
 import RoundedButton from '../components/RoundedButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { login } from '../services/authService'; // tu función de login (ver respuesta anterior)
+
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [dni, setDni] = useState('');
   const [pwd, setPwd] = useState('');
+  
+ const handleLogin = async () => {
+  try {
+    const token = await login({ username: dni, password: pwd });
+    await AsyncStorage.setItem('userToken', token);
+    navigation.navigate('Inicio');
+  } catch (err) {
+    alert('Error de autenticación: ' + (err?.detail || 'Verifica tus datos'));
+  }
+};
+
 
   return (
     <ImageBackground source={require('../assets/fondo.jpg')} style={styles.bg}>
@@ -31,11 +45,11 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <TextInput
-              placeholder="Usuario o Email"
-              placeholderTextColor="#aaa"
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
+            placeholder="DNI"
+            placeholderTextColor="#aaa"
+            style={styles.input}
+            value={dni}
+            onChangeText={setDni}
             />
             <TextInput
               placeholder="Contraseña"
@@ -46,7 +60,8 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setPwd}
             />
 
-            <RoundedButton title="Iniciar Sesion" onPress={() => navigation.navigate('Inicio')} />
+            <RoundedButton title="Iniciar Sesion" onPress={handleLogin} />
+
 
             <Pressable onPress={() => navigation.navigate('ResetPassword')}>
               <Text style={styles.forgot}>¿Olvido su contraseña?</Text>

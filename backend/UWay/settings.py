@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-embug4x_a3j441pbzhzno!%fxkbf)n^@z^%qdgbpit=8@+)d7s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -105,11 +103,11 @@ WSGI_APPLICATION = 'UWay.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DB_NAME', 'uway'),
-        'USER': os.getenv('DB_USER', 'uway'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'uway123'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME': os.getenv('DB_NAME','uway'),
+        'USER': os.getenv('DB_USER','uway'),
+        'PASSWORD': os.getenv('DB_PASSWORD','uway123'),
+        'HOST': os.getenv('DB_HOST','localhost'),
+        'PORT': os.getenv('DB_PORT','5432'),
     } 
 }
 
@@ -155,7 +153,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allowed host
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','192.168.1.5' ]
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

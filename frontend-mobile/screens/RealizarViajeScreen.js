@@ -1,173 +1,205 @@
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-  FlatList,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+  import React, { useState } from 'react';
+  import {
+    SafeAreaView,
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    TextInput,
+    TouchableOpacity,
+    Platform,
+    StatusBar,
+    Alert,
+  } from 'react-native';
+  import { useNavigation } from '@react-navigation/native';
+  import { crearViaje } from '../services/tripService';
+  import { direccionATupla } from '../services/geocodeService'; // IMPORTANTE
 
+  import { Lupa } from '../components/Lupa';
+  import { Ubicacion } from '../components/Icono_ubicacion';
+  import { Inicio as InicioIcon } from '../components/Icono_inicio';
+  import { Icono_Historial as HistorialIcon } from '../components/Icono_historial';
+  import { Cuenta as CuentaIcon } from '../components/Icono_cuenta';
 
-import { Lupa } from '../components/Lupa';
-import { Ubicacion } from '../components/Icono_ubicacion';
-import { Inicio as InicioIcon } from '../components/Icono_inicio';
-import { Icono_Historial as HistorialIcon } from '../components/Icono_historial';
-import { Cuenta as CuentaIcon } from '../components/Icono_cuenta';
+  export default function RealizarViajeScreen() {
+    const navigation = useNavigation();
+    const [origen, setOrigen] = useState('');
+    const [destino, setDestino] = useState('');
+    const [loading, setLoading] = useState(false);
 
+    const handleConfirmar = async () => {
+      if (!origen || !destino) {
+        Alert.alert('Faltan datos', 'Por favor completa origen y destino');
+        return;
+      }
 
-export default function RealizarViajeScreen() {
-  const navigation = useNavigation();
-  const [origen, setOrigen] = useState('');
-  const [destino, setDestino] = useState('');
+      setLoading(true);
+      try {
+        // 1. Convierte las direcciones a coordenadas reales usando Nominatim
+        const coordsOrigen = await direccionATupla(origen);
+        const coordsDestino = await direccionATupla(destino);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Realizar viaje</Text>
-
-          {/* Campo origen */}
-          <View style={styles.inputWrapper}>
-            <Lupa width={20} height={20} />
-            <TextInput
-              style={styles.input}
-              placeholder="Selecciona el punto de inicio"
-              value={origen}
-              onChangeText={setOrigen}
-            />
-          </View>
-
-          {/* Resultado seleccionado (mock) */}
-          {origen ? (
-            <View style={styles.resultRow}>
-              <Ubicacion width={20} height={20} />
-              <Text style={styles.resultTxt}>{origen}</Text>
-            </View>
-          ) : null}
-
-          {/* Campo destino */}
-          <View style={[styles.inputWrapper, { marginTop: 28 }]}>
-            <Lupa width={20} height={20} />
-            <TextInput
-              style={styles.input}
-              placeholder="Selecciona las paradas y el punto de destino"
-              value={destino}
-              onChangeText={setDestino}
-            />
-          </View>
-
-          {destino ? (
-            <View style={styles.resultRow}>
-              <Ubicacion width={20} height={20} />
-              <Text style={styles.resultTxt}>{destino}</Text>
-            </View>
-          ) : null}
-
-          <TouchableOpacity style={styles.confirmBtn} onPress={() => navigation.navigate('ViajesDisponibles')}>
-            <Text style={styles.confirmTxt}>Confirmar</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <BottomNav current="Inicio" navigation={navigation} />
-    </SafeAreaView>
-  );
-}
-
-function BottomNav({ current, navigation }) {
-  return (
-    <View style={styles.bottomNav}>
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Inicio')}>
-        <InicioIcon width={28} height={28} />
-        <Text style={styles.navTxt}>Inicio</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Historial')}>
-        <HistorialIcon width={28} height={28} />
-        <Text style={styles.navTxt}>Historial</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Cuenta')}>
-        <CuentaIcon width={28} height={28} />
-        <Text style={styles.navTxt}>Cuenta</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#E5E5E5' },
-  scroll: {
-    paddingHorizontal: 20,
-    paddingTop: STATUS_BAR_HEIGHT + 20,
-    paddingBottom: 120,
-  },
-  title: { fontSize: 28, fontWeight: '700', marginBottom: 24 },
-
-  card: {
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 24,
-  },
-
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  input: { flex: 1, marginLeft: 8 },
-
-  resultRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  resultTxt: { marginLeft: 8, fontWeight: '700' },
-
-  confirmBtn: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#7A00FF',
-    paddingVertical: 10,
-    paddingHorizontal: 32,
-    borderRadius: 24,
-    marginTop: 40,
-  },
-  confirmTxt: { color: '#FFF', fontWeight: '700' },
-
-
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-    backgroundColor: '#FFF',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  navItem: { justifyContent: 'center', alignItems: 'center' },
-  navTxt: { marginTop: 4, fontSize: 12, fontWeight: '600' },
+        // 2. Crea el viaje con los datos reales
+    const viaje = await crearViaje({
+    vehicle: 1, // Cambia por el id correcto
+    start_point: { type: "Point", coordinates: coordsOrigen },
+    end_point: { type: "Point", coordinates: coordsDestino },
+    start_time: new Date().toISOString()
 });
+        Alert.alert('Viaje creado', 'ID: ' + viaje.id);
+        // Opcional: navegar a otra pantalla después de crear
+        // navigation.navigate('ViajesDisponibles');
+      } catch (err) {
+        Alert.alert('Error', err.message ? err.message : JSON.stringify(err));
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    return (
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scroll}>
+          <View style={styles.card}>
+            <Text style={styles.title}>Realizar viaje</Text>
 
+            {/* Campo origen */}
+            <View style={styles.inputWrapper}>
+              <Lupa width={20} height={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Selecciona el punto de inicio"
+                value={origen}
+                onChangeText={setOrigen}
+              />
+            </View>
+
+            {origen ? (
+              <View style={styles.resultRow}>
+                <Ubicacion width={20} height={20} />
+                <Text style={styles.resultTxt}>{origen}</Text>
+              </View>
+            ) : null}
+
+            {/* Campo destino */}
+            <View style={[styles.inputWrapper, { marginTop: 28 }]}>
+              <Lupa width={20} height={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Selecciona las paradas y el punto de destino"
+                value={destino}
+                onChangeText={setDestino}
+              />
+            </View>
+
+            {destino ? (
+              <View style={styles.resultRow}>
+                <Ubicacion width={20} height={20} />
+                <Text style={styles.resultTxt}>{destino}</Text>
+              </View>
+            ) : null}
+
+            <TouchableOpacity
+              style={styles.confirmBtn}
+              onPress={handleConfirmar}
+              disabled={loading}
+            >
+              <Text style={styles.confirmTxt}>
+                {loading ? 'Creando...' : 'Confirmar'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        <BottomNav current="Inicio" navigation={navigation} />
+      </SafeAreaView>
+    );
+  }
+
+  function BottomNav({ current, navigation }) {
+    return (
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Inicio')}>
+          <InicioIcon width={28} height={28} />
+          <Text style={styles.navTxt}>Inicio</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Historial')}>
+          <HistorialIcon width={28} height={28} />
+          <Text style={styles.navTxt}>Historial</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Cuenta')}>
+          <CuentaIcon width={28} height={28} />
+          <Text style={styles.navTxt}>Cuenta</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
+
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#E5E5E5' },
+    scroll: {
+      paddingHorizontal: 20,
+      paddingTop: STATUS_BAR_HEIGHT + 20,
+      paddingBottom: 120,
+    },
+    title: { fontSize: 28, fontWeight: '700', marginBottom: 24 },
+
+    card: {
+      backgroundColor: '#FFF',
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: 24,
+    },
+
+    inputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#FFF',
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+    },
+    input: { flex: 1, marginLeft: 8 },
+
+    resultRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    resultTxt: { marginLeft: 8, fontWeight: '700' },
+
+    confirmBtn: {
+      alignSelf: 'flex-start',
+      backgroundColor: '#7A00FF',
+      paddingVertical: 10,
+      paddingHorizontal: 32,
+      borderRadius: 24,
+      marginTop: 40,
+    },
+    confirmTxt: { color: '#FFF', fontWeight: '700' },
+
+    bottomNav: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 80,
+      backgroundColor: '#FFF',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    navItem: { justifyContent: 'center', alignItems: 'center' },
+    navTxt: { marginTop: 4, fontSize: 12, fontWeight: '600' },
+  });
