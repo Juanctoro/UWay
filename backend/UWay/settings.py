@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-embug4x_a3j441pbzhzno!%fxkbf)n^@z^%qdgbpit=8@+)d7s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -72,6 +70,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+CORS_ALLOW_ALL_ORIGINS = True  # solo en desarrollo
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Puerto de Vite
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -156,7 +160,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allowed host
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','192.168.1.5' ]
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

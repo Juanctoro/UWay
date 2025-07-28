@@ -11,6 +11,7 @@ from .serializers import *
 from reservation.models import Reservation
 from datetime import date
 
+
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calcula la distancia en metros entre dos puntos
@@ -112,7 +113,6 @@ class TripViewSet(viewsets.ModelViewSet):
             nearest = stops[idx]
             min_dist = distancias[idx]
 
-            # 5. Preparar salida
             results.append({
                 "trip_id": trip.id,
                 "vehicle_plate": trip.vehicle.plate,
@@ -123,7 +123,6 @@ class TripViewSet(viewsets.ModelViewSet):
                     "latitude":  nearest[1]
                 }
             })
-
         return Response(results)
     
     @action(detail=False, methods=['get'], url_path='my-scheduled', permission_classes=[IsAuthenticated])
