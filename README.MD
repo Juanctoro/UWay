@@ -48,7 +48,10 @@ Este repositorio contiene la aplicación **UWay**, compuesta por un backend en D
    ```bash
    python manage.py runserver
    ```
-
+6. Para crar una app como por ejempĺo los usuarios
+   ```bash
+   python manage.py startapp users
+   ```
 > El backend se ejecutará localmente hasta que integremos el despliegue con Docker.
 
 ---
