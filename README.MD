@@ -72,3 +72,21 @@ Este repositorio contiene la aplicación **UWay**, compuesta por un backend en D
    ```
 
 > Al igual que el backend, el frontend se ejecuta localmente hasta configurar Docker para el despliegue.
+
+## frontend-mobile
+
+1. Usar la rama vn
+
+2. Navegar a frontend-mobile
+
+3. Instalar los requisitos: 
+
+ ```
+   npm install
+   npm install expo
+   ```
+4. Ejecutar:
+ ```
+  mpx expo start
+   ```
+
